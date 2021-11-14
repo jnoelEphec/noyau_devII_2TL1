@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 
-from src.config import config
+from mephenger.config import config
 
 
 class MongoConnector:

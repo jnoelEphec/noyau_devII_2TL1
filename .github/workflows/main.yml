@@ -25,4 +25,4 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install pytest
       - name: Run tests for password_checker module
-        run: pytest ./src/libs/password_checker/tests.py
+        run: pytest ./mephenger/libs/password_checker/tests.py

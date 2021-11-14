@@ -40,16 +40,16 @@ class ScreensManager(ScreenManager):
         obj_screen = None
 
         if href == "login":
-            from src.views.login import Login
+            from mephenger.views.login import Login
             obj_screen = Login()
         elif href == "subscribe":
-            from src.views.subscribe import Subscribe
+            from mephenger.views.subscribe import Subscribe
             obj_screen = Subscribe()
         elif href == "profile":
-            from src.views.profile import Profile
+            from mephenger.views.profile import Profile
             obj_screen = Profile()
         elif href == "help":
-            from src.views.help import Help
+            from mephenger.views.help import Help
             obj_screen = Help()
 
         return obj_screen

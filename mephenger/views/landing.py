@@ -13,11 +13,11 @@
 from kivy.lang import Builder
 from kivy.uix.screenmanager import Screen
 
-from src.config import config
-from src.models.screens_manager import ScreensManager
-from src.views.conversation import Conversation
-from src.views.teams_container import TeamsContainer
-from src.views.channels import ChannelsContainer
+from mephenger.config import config
+from mephenger.models.screens_manager import ScreensManager
+from mephenger.views.conversation import Conversation
+from mephenger.views.teams_container import TeamsContainer
+from mephenger.views.channels import ChannelsContainer
 
 Builder.load_file("{0}/header.kv".format(config.VIEWS_DIR))
 Builder.load_file("{0}/landing.kv".format(config.VIEWS_DIR))

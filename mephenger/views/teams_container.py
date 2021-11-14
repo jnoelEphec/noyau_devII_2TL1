@@ -11,12 +11,12 @@ from kivy.uix.label import Label
 from kivy.uix.screenmanager import ScreenManagerException
 from kivy.uix.scrollview import ScrollView
 
-from src.config import config
-from src.libs.sorting.dict_sort import dict_sort
-from src.models.channel import Channel
-from src.models.group import Group
-from src.models.screens_manager import ScreensManager
-from src.models.team import Team
+from mephenger.config import config
+from mephenger.libs.sorting.dict_sort import dict_sort
+from mephenger.models.channel import Channel
+from mephenger.models.group import Group
+from mephenger.models.screens_manager import ScreensManager
+from mephenger.models.team import Team
 
 
 Builder.load_file("{0}/teams.kv".format(config.VIEWS_DIR))
@@ -121,7 +121,7 @@ class TeamsContainer(ScrollView):
 
         if self.data_from_db:
 
-            # Trier sur le nom grâce à notre librairie de tri src.libs.sorting
+            # Trier sur le nom grâce à notre librairie de tri mephenger.libs.sorting
             data_from_db = dict_sort(self.data_from_db, "name")
 
             for team_id in data_from_db:

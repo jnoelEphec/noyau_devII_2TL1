@@ -14,9 +14,9 @@ from kivy.uix.label import Label
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.scrollview import ScrollView
 
-from src.config import config
-from src.libs.bot.commands import Commands
-from src.models.message import Message
+from mephenger.config import config
+from mephenger.libs.bot.commands import Commands
+from mephenger.models.message import Message
 
 
 Builder.load_file("{0}/conversation.kv".format(config.VIEWS_DIR))

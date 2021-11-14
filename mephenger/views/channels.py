@@ -14,8 +14,8 @@ from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.screenmanager import ScreenManagerException
 from kivy.uix.scrollview import ScrollView
 
-from src.config import config
-from src.models.screens_manager import ScreensManager
+from mephenger.config import config
+from mephenger.models.screens_manager import ScreensManager
 
 
 Builder.load_file("{0}/channel.kv".format(config.VIEWS_DIR))

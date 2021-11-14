@@ -7,7 +7,7 @@
 """
 import json
 
-from src.config import config
+from mephenger.config import config
 
 
 class Message:
