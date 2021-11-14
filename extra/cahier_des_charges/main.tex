@@ -1,0 +1,137 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage[margin=3.5cm]{geometry}
+
+% Use Sans Serif font
+\renewcommand{\familydefault}{\sfdefault}
+
+\title{
+    {\Huge Cahier des charges}
+    \\ \vspace{1em} \textbf{\textsc{Groupe 2TL1-5}}
+    \vspace{1em}
+}
+\author{
+    Aurelle Awountsa
+    \and Mark Borca
+    \and Morgane Leclerc
+    \and Thomas Namurois
+    \and François Temmerman
+    \vspace{1em}
+}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Présentation du client}
+
+L’EPHEC, est une haute école créée par Serge Gasquard en 1969.
+Ils possèdent à l’heure actuelle 4 implantations situées à 
+Schaerbeek, Louvain-la-Neuve, Auderghem et Woluwe-Saint-Lambert.
+L’établissement propose une vingtaine de bacheliers et formations.
+
+\section{Présentation du projet}
+
+Au vu de la situation sanitaire actuelle,
+l’EPHEC désire une solution permettant aux élèves et aux professeurs de communiquer entre eux à distance.
+L’EPHEC nous charge donc de développer un programme permettant la communication écrite
+, avec une ou plusieurs personnes,
+au travers d’une interface.
+
+\section{Objectif client}
+
+L’objectif du client
+, par la réalisation de ce projet,
+est l’amélioration de la communication en distanciel
+au sein des différents établissements scolaires de l’EPHEC.
+
+\section{Intervenants}
+
+% Using minipage to avoid the list being cut by a pagebreak
+\begin{minipage}{\linewidth}
+\begin{itemize}
+    \item Les clients: la heute-école EPHEC
+    \item Le prestataire: le groupe \texttt{2TL1-5}
+    \item La supervision des prestataires se fera par Mr Noël, professeur du groupe \texttt{2TL1-5} à Louvain-la-Neuve
+\end{itemize}
+\end{minipage}
+
+\section{Public cible \& utilisateurs}
+
+\begin{minipage}{\linewidth}
+
+Nos publics cibles sont:
+
+\begin{itemize}
+    \item Les étudiants de l'EPHEC
+    \item Les professeurs travaillant à l'EPHEC
+    \item Les différents membres du personnel de l'EPHEC
+\end{itemize}
+\end{minipage}
+
+\section{Demandes fonctionnelles}
+
+\begin{enumerate}
+    \item L’utilisateur doit avoir la possibilité d’envoyer un message à destination d’un groupe ou d’un autre utilisateur
+    \item L’utilisateur doit avoir la possibilité de sélectionner le groupe ou l’utilisateur à qui il veut envoyer un message
+    \item L’utilisateur doit avoir la possibilité de recevoir le message d’un autre groupe ou utilisateur
+    \item Les messages échangés entre les utilisateurs doivent avoir un affichage permettant leur lecture
+    \item L’historique complet des messages doit être accessible
+    \item L’utilisateur doit voir les groupes et utilisateurs avec lesquels il a une discussion active
+    \item L’utilisateur doit avoir la possibilité créer des groupes
+    \item L’utilisateur doit avoir la possibilité quitter des groupes
+    \item L’utilisateur doit voir les autres utilisateurs membres d’un groupe dont il est membre
+    \item Les conversations doivent être affichées en fonction de l’utilisateur identifié
+\end{enumerate}
+
+\section{Contraintes}
+
+\begin{minipage}{\linewidth}
+\begin{enumerate}
+    \item L’application devra être développée en Python
+    \item MongoDB fera office de base de données
+    \item L’interface graphique devra être faite avec la librairie Kivy 2.0
+    \item Nous devrons utiliser un dépôt Git pour la gestion de version, dépôt hébergé 
+sur Github
+\end{enumerate}
+\end{minipage}
+
+\section{Charte graphique \& ergonomique}
+
+L’interface doit être simple, efficace,
+permettre aux utilisateurs d’utiliser le programme sans difficulté
+afin qu’il puisse être utilisable par tous les membres de l’EPHEC.
+
+\section{Enveloppe budgétaire}
+
+La demande émanant des professeurs de l’EPHEC
+dans le cadre d’un cours pour le groupe prestataire
+et ne demandant pas de dépense (serveur, matériel informatique,...),
+aucune enveloppe budgétaire et rémunération ne sera fournie.
+
+\section{Planification}
+
+Ce projet doit être développé pour la fin décembre. Chaque semaine, le lundis 
+matins à 8h30, une rencontre avec le client, en accord avec ce dernier, sera prévue 
+pour présenter l’état d’avancement et faire une mise au point sur les besoins du 
+client. 
+
+\begin{minipage}{\linewidth}
+
+Pour l’état d’avancement, certaines dates ont déjà été définies : 
+
+\begin{itemize}
+    \item \textbf{18/10}: Définition du Produit Minimum Viable
+    \item \textbf{25/10}: Définition du cahier des charges
+    \item \textbf{08/11}: Démonstration du Produit Minimum Viable  
+    \item \textbf{22/11}: Démonstration de la solution complète 
+    \item \textbf{29/11}: Démonstration de la fiabilité de la solution par la réalisation de différents tests
+\end{itemize}
+\end{minipage}
+
+
+\end{document}
+
