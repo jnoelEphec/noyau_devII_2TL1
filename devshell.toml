@@ -1,0 +1,72 @@
+[devshell]
+name = "projet-dev2-2tl1-5"
+packages = [
+  "graphviz",
+  "python39",
+  "python39Packages.kivy",
+  "python39Packages.kivy-garden",
+  "ripgrep",
+  "sd",
+]
+
+[[env]]
+name = "PYTHONPATH"
+prefix = "$DEVSHELL_DIR/lib/python3.9/site-packages"
+
+[[env]]
+name = "PYTHON_VENV_DIR"
+eval = "$PRJ_ROOT/env"
+
+[devshell.startup.python-venv]
+text = '''
+
+if ! [ -d "$PYTHON_VENV_DIR" ]; then
+  python -m venv "$PYTHON_VENV_DIR"
+  python -m pip install -r requirements.txt
+fi
+
+export VIRTUAL_ENV_DISABLE_PROMPT=1
+source "$PYTHON_VENV_DIR"/bin/activate
+
+'''
+
+[[env]]
+name = "BLACKD_PORT"
+value = "60314"
+
+[devshell.startup.black-daemon]
+text = '''
+
+if ! ps ax | rg "[b]lackd.*$BLACKD_PORT" 1>/dev/null; then
+  blackd --bind-host localhost --bind-port "$BLACKD_PORT" & 2>/dev/null 1>&2
+fi
+
+'''
+
+[[commands]]
+name = "black"
+category = "Lints & Formatting"
+package = "python39Packages.black"
+
+[[commands]]
+name = "venv"
+category = "Python commands"
+help = "Creates virtual Python environments in one or more target directories"
+command = 'python -m venv "$@"'
+
+[[commands]]
+name = "pip"
+category = "Python commands"
+help = "Install and manage python packages"
+command = 'python -m pip "$@"'
+
+[[commands]]
+name = "pip-export"
+category = "Python commands"
+help = "Freeze all currently installed packages in requirements.txt"
+command = 'python -m pip freeze'
+
+[[commands]]
+name = "tectonic"
+category = "Latex commands"
+package = "tectonic"
