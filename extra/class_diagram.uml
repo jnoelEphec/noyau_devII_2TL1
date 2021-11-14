@@ -1,0 +1,77 @@
+@startuml
+
+skinparam class {
+    BackgroundColor white
+    ArrowColor black
+    BorderColor grey
+}
+
+abstract class Conversation {
+    +id: int readOnly
+    -messages: List[Message] ordered
+    --
+    +messages() -> List[Message]
+    +send(msg: Message)
+    +update_messages() -> List[Message]
+}
+
+class Private {
+    +to: User readOnly
+    --
+    send(msg: Message)
+}
+Private --|> Conversation
+
+class Group {
+    -members: List[User]
+    -name: str
+    +owner: User readOnly
+    --
+    +add_member(performer: User, invitee: User)
+    +remove_member(performer: User, kickee: User)
+    +members() -> List[User]
+    +name() -> str
+    +send(msg: Message)
+    +set_name(performer: User, name: str)
+    +update_members()
+}
+Group --|> Conversation
+
+class Message {
+    +id: int readOnly
+    +sender: User readOnly
+    -text: str
+    --
+    +text() -> str
+    +set_text(performer: User, txt: str)
+}
+
+Message "*" --* "1" Conversation
+
+class User {
+    +name: str readOnly
+    --
+}
+User "*" --o "*" Message
+User "1" --* "1" Private
+User "*" --* "*" Group
+
+class Session {
+    -conversations: List[Conversation]
+    -current_user: Union[None, User]
+    -current_conversation: Conversation
+    --
+    +{static} log_in(user: User, password: str) -> Session
+    +add_to_group(group: Group, user: User)
+    +create_group()
+    +log_off()
+    +remove_from_group(group: Group, user: User)
+    +send(to: Conversation, msg: Message)
+    +switch_conversation(to: Conversation)
+    +update_current_conversation()
+    +update_background_conversations()
+}
+Session "0..1" *-- "1" User
+Session "1" *-- "*" Conversation
+
+@enduml
