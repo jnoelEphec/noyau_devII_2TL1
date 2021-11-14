@@ -6,8 +6,10 @@
     ===================================
 
     Ce logiciel a été développé dans le cadre scolaire.
-    EpheCom est un logiciel de communications - vocale et écrite - en temps réel.
-    Il a pour but d'améliorer la communication au sein de l'établissement scolaire.
+    EpheCom est un logiciel de communications - vocale et écrite - en temps
+    réel.
+    Il a pour but d'améliorer la communication au sein de l'établissement
+    scolaire.
 
     Version de Python : 3.9
     Système d'exploitation : Windows, OSX, Linux
@@ -26,12 +28,12 @@ from kivy.app import App
 from kivy.lang import Builder
 from pymongo import MongoClient
 
-import src.config.config as config
+import mephenger.config.config as config
 import pymongo as pymongo
 import os
 
-from src.models.mongo_connector import MongoConnector
-from src.models.screens_manager import ScreensManager
+from mephenger.models.mongo_connector import MongoConnector
+from mephenger.models.screens_manager import ScreensManager
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -43,7 +45,7 @@ class Main(App):
     title = 'EpheCom'
 
     def build(self):
-        from src.views.landing import LandingScreen
+        from mephenger.views.landing import LandingScreen
 
         sm = ScreensManager()
         landing_screen = LandingScreen()
@@ -56,8 +58,8 @@ class Main(App):
 class Personne:
     def __init__(self, nom):
         self.nom = nom
-        
-        
+
+
 class Etudiant(Personne):
     def __init__(self, nom):
         super(Etudiant, self).__init__(nom)
