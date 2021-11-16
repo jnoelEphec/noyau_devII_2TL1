@@ -51,7 +51,7 @@ try:
     VERSION = subprocess.check_output(
         ["grep", "-o", "-m", "1", "version = \"[a-zA-Z0-9.-]*\"", "flake.nix"],
     ).decode().replace("version =", "").replace("\"", "").strip()
-except subprocess.CalledProcessError:
+except (subprocess.CalledProcessError, FileNotFoundError):
     VERSION = "0.dev0"
 
 

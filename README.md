@@ -11,13 +11,19 @@ Ce logiciel a été développé dans le cadre du projet EpheCom de la haute-éco
 python -m venv env
 ./env/bin/activate
 python -m pip install setuptools
-python setupy.py generate_requirements
+python setup.py generate_requirements
 python -m pip install -r requirements.txt
 ```
 
 ## Windows
 
-> WIP
+```shell
+python -m venv env
+env\Script\activate
+python -m pip install setuptools
+python setup.py generate_requirements
+python -m pip install -r requirements.txt
+```
 
 # Configurer l'aplication
 
@@ -33,7 +39,11 @@ PRJ_ROOT=chemin/vers/le/dossier/du/projet
 
 # Construire et installer le packet pypy
 
-> WIP
+```shell
+python setup.py build   # Construire uniquement
+python setup.py install # Construire et installer
+mephenger               # Lancer l'app
+```
 
 # Utiliser ce projet avec [nix](https://nixos.org/explore.html)
 

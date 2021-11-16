@@ -11,13 +11,19 @@ This software has been developped for the EpheCom project by the
 python -m venv env
 ./env/bin/activate
 python -m pip install setuptools
-python setupy.py generate_requirements
+python setup.py generate_requirements
 python -m pip install -r requirements.txt
 ```
 
 ## Windows
 
-> WIP
+```shell
+python -m venv env
+env\Script\activate
+python -m pip install setuptools
+python setup.py generate_requirements
+python -m pip install -r requirements.txt
+```
 
 # Configuring the app
 
@@ -32,7 +38,11 @@ PRJ_ROOT=path/to/projet/root
 
 # Build and install pypy package
 
-> WIP
+```shell
+python setup.py build   # Build only
+python setup.py install # Build and install
+mephenger               # Run the app
+```
 
 # Using [nix](https://nixos.org/explore.html)
 
