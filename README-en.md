@@ -11,6 +11,7 @@ This software has been developped for the EpheCom project by the
 python -m venv env
 ./env/bin/activate
 python -m pip install setuptools
+python setupy.py generate_requirements
 python -m pip install -r requirements.txt
 ```
 

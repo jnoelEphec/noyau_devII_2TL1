@@ -11,6 +11,7 @@ Ce logiciel a été développé dans le cadre du projet EpheCom de la haute-éco
 python -m venv env
 ./env/bin/activate
 python -m pip install setuptools
+python setupy.py generate_requirements
 python -m pip install -r requirements.txt
 ```
 
