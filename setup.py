@@ -75,7 +75,8 @@ class Requirement:
             raise ValueError(f"Invalid package name: {package}")
         if not all([self.VERSION_RE.fullmatch(v) for v in version]):
             raise ValueError(
-                f"Invalid version spec for package {package}: {'.'.join(version)}"
+                f"Invalid version spec for package {package}: "
+                f"{'.'.join(version)}"
             )
 
         self._package = package
@@ -126,6 +127,24 @@ class Requirement:
         return self._criterion
 
     @property
+    def major_version(self):
+        """
+        All but the last element of the version if it is has more than one part.
+        The whole version otherwise.
+        """
+        return self.version if self.version is None or len(self.version) == 1 \
+            else self.version[:-1]
+
+    @property
+    def patch(self):
+        """
+        The last element of the version if it is has more than one part.
+        None otherwise.
+        """
+        return None if self.version is None or len(self.version) == 1 \
+            else self.version[-1]
+
+    @property
     def package(self) -> str:
         return self._package
 
@@ -134,8 +153,8 @@ class Requirement:
         return self._version
 
     def compatible_with(self, o: Union[str, 'Requirement']) -> Optional[Tuple[
-            Optional[bool],
-            Optional[bool]
+        Optional[bool],
+        Optional[bool]
     ]]:
         """
         Check if a requirement is a compatible version of a given package of
@@ -160,46 +179,34 @@ class Requirement:
         """
         if isinstance(o, str):
             return self.compatible_with(Requirement(o))
-        p1, v1, c1 = self._as_tuple()
-        p2, v2, c2 = o._as_tuple()
         # Check package names are the same
-        if p1 != p2:
+        if self.package != o.package:
             return None
         # Check if version info is available for both packages
         # (1)
-        if v1 is None or v2 is None:
+        if self.version is None or o.version is None:
             return None, None
-        # Split major, minor, etc. version info from the last segment
-        # (supposedly patch number), if version follows such structure
-        major_minor1 = v1
-        major_minor2 = v2
-        patch1 = patch2 = None
-        if v1 is not None and len(v1) > 1:
-            major_minor1 = v1[:-1]
-            patch1 = v1[-1]
-        if v2 is not None and len(v2) > 1:
-            major_minor2 = v2[:-1]
-            patch2 = v2[-1]
         # Check if version info structure is the same
-        if patch1 is None and patch2 is not None or \
-                patch1 is not None and patch2 is None \
-                or v1 is not None and len(v1) != len(v2):
+        if self.patch is None and o.patch is not None or \
+                self.patch is not None and o.patch is None \
+                or (self.version is not None
+                    and len(self.version) != len(o.version)):
             return None, None
         # Check if o's version is compatible
-        version_compatible = v1 == v2
-        if c1 == 1:
-            version_compatible = major_minor1 == major_minor2
-        elif c1 == 0:
+        version_compatible = self.version == o.version
+        if self.criterion == 1:
+            version_compatible = self.major_version == o.major_version
+        elif self.criterion == 0:
             # We know v1 and v2 are both lists thanks to (1), thus the <=
             # operation is defined
             # noinspection PyTypeChecker
-            version_compatible = version_compatible or v1 <= v2
+            version_compatible = version_compatible or self.version <= o.version
 
         # Check if version compatibility requirement (a.k.a. criteria) are
         # looser than o's, stricter, or the same
-        if c2 > c1:
+        if o.criterion > self.criterion:
             return version_compatible, None
-        if c1 > c2:
+        if self.criterion > o.criterion:
             return version_compatible, False
         return version_compatible, True
 
@@ -217,33 +224,36 @@ class Requirement:
         """
         if isinstance(o, str):
             return self.upgrade(Requirement(o))
-        p1, v1, c1 = self._as_tuple()
-        p2, v2, c2 = o._as_tuple()
         is_compatible = self.compatible_with(o)
 
         if is_compatible is None:
             raise ValueError(
-                f"Cannot upgrade package '{p1}' to different package '{p2}'"
+                f"Cannot upgrade package '{self.package}' to different package "
+                f"'{o.package}'"
             )
         is_version_compatible, is_criterion_compatible = is_compatible
         if not ignore_looser_criterion and is_criterion_compatible is None:
             raise ValueError(
-                f"Cannot upgrade package {p1} with a looser version "
-                f"compatibility requirement ({self.criteria(c2)}) than its "
-                f"current ({self.criteria(c1)})"
+                f"Cannot upgrade package {self.package} with a looser version "
+                f"compatibility requirement ({self.criteria(o.criterion)}) than "
+                f"its current ({self.criteria(self.criterion)})"
             )
         if force_keep_criterion and not is_criterion_compatible:
             raise ValueError(
-                f"Cannot upgrade package {p1} with a stricter version "
-                f"compatibility requirement ({self.criteria(c2)}) than its "
-                f"current ({self.criteria(c1)})"
+                f"Cannot upgrade package {self.package} with a stricter "
+                f"version compatibility requirement "
+                f"({self.criteria(o.criterion)}) than its current "
+                f"({self.criteria(self.criterion)})"
             )
         if force_compatible_version and not is_version_compatible:
             raise ValueError(
-                f"Cannot upgrade package {p1} at version {'.'.join(v1)} to "
-                f"non-compatible version {v2}"
+                f"Cannot upgrade package {self.package} at version "
+                f"{'.'.join(self.version)} to non-compatible version "
+                f"{o.version}"
             )
-        return Requirement(f"{p2}{self.criteria(c2)}{'.'.join(v2)}")
+        return Requirement(
+            f"{o.package}{self.criteria(o.criterion)}{'.'.join(o.version)}"
+        )
 
 
 class RequirementsComparison:
@@ -257,11 +267,35 @@ class RequirementsComparison:
         force_keep_criterion: bool = False,
         ignore_looser_criterion: bool = False,
     ):
+        """
+        Compare two sets of requirements, one being the reference.
+        """
         self._ref = ref
         self._to = to
-        self._from_to = {r.package: r for r in self._get_requirements(to)}
+        self._from_to = {}
+
+        # Incrementally add in packages to catch incompatible ones
+        for r in self._get_requirements(to):
+            try:
+                self._from_to[r.package] = \
+                    self._from_to.get(r.package, r).upgrade(
+                        r,
+                        force_compatible_version=force_compatible_version,
+                        force_keep_criterion=force_keep_criterion,
+                        ignore_looser_criterion=ignore_looser_criterion
+                    )
+            except ValueError:
+                raise ValueError(
+                    "Got two incompatible requirements of the same package:"
+                    f" {self._from_to[r.package]} and {r}"
+                )
+
+        # This one will be emptied as we add requirements from the reference
         self._extra = self._from_to.copy()
+        # This one will be filled further more as we add requirements from the
+        # reference
         self._merged = self._from_to.copy()
+        # These one will be filled up with requirements from the reference
         self._from_ref = {}
         self._missing = {}
         self._stricter = {}
@@ -270,16 +304,21 @@ class RequirementsComparison:
         self._behind = {}
         self._ahead = {}
 
+        # Add the reference's requirements
         for r in self._get_requirements(ref):
             if r.package in self._from_ref:
+                # If requirement's package is already known from the reference,
+                # just check if it is compatible with the already merged in
+                # requirement and replace it in the reference's requirements
                 try:
-                    self._from_ref[r.package] = \
-                        self._from_ref[r.package].upgrade(
+                    self._merged[r.package] = \
+                        self._merged[r.package].upgrade(
                             r,
                             force_compatible_version=force_compatible_version,
                             force_keep_criterion=force_keep_criterion,
                             ignore_looser_criterion=ignore_looser_criterion
                         )
+                    self._from_ref[r.package] = self._merged[r.package]
                 except ValueError:
                     raise ValueError(
                         "Got two incompatible requirements of the same package:"
@@ -287,9 +326,12 @@ class RequirementsComparison:
                     )
                 continue
 
+            # If requirements is not already known from the reference, we
+            # should first check if it is compatible with the same package from
+            # the already merged in set (if there is one, hence why `.get`)
             try:
                 self._merged[r.package] = \
-                    self._from_to.get(r.package, r).upgrade(
+                    self._merged.get(r.package, r).upgrade(
                         r,
                         force_compatible_version=force_compatible_version,
                         force_keep_criterion=force_keep_criterion,
@@ -298,6 +340,7 @@ class RequirementsComparison:
                 if r.package in self._conflicts:
                     del self._conflicts[r.package]
             except ValueError:
+                # Requirement isn't compatible, add it to conflicting packages
                 self._conflicts[r.package] = r
 
             if r.package in self._extra:
@@ -349,26 +392,46 @@ class RequirementsComparison:
 
     @property
     def ahead(self):
+        """
+        A sequence of requirements whose version is newer than the reference.
+        """
         return self._ahead.values()
 
     @property
     def behind(self):
+        """
+        A sequence of requirements whose version is older than the reference.
+        """
         return self._behind.values()
 
     @property
     def compared_requirements(self):
+        """
+        The sequence of requirements compared to the reference set.
+        """
         return self._from_to.values()
 
     @property
     def conflicts(self):
+        """
+        A sequence of packages from the reference set that conflict with the
+        compared set.
+        """
         return self._conflicts.values()
 
     @property
     def extra(self):
+        """
+        A sequence of packages that are not in the reference set.
+        """
         return self._extra.values()
 
     @property
     def looser(self):
+        """
+        A sequence of packages whose version compatibility requirement (a.k.a
+        the criterion of Requirements objects) is looser than the reference.
+        """
         return self._looser.values()
 
     @property
@@ -377,14 +440,25 @@ class RequirementsComparison:
 
     @property
     def missing(self):
+        """
+        A sequence of packages that are in the reference set but missing from
+        the compared set.
+        """
         return self._missing.values()
 
     @property
     def ref_requirements(self):
+        """
+        The sequence of requirements from the reference set.
+        """
         return self._from_ref.values()
 
     @property
     def stricter(self):
+        """
+        A sequence of packages whose version compatibility requirement (a.k.a
+        the criterion of Requirements objects) is stricter than the reference.
+        """
         return self._stricter.values()
 
 
