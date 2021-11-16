@@ -18,14 +18,19 @@ REQUIREMENTS = [
     "imagesize==1.2.0",
     "Jinja2==3.0.1",
     "Kivy==2.0.0",
+    "kivy-deps.angle==0.3.0",
+    "kivy-deps.glew==0.3.0",
+    "kivy-deps.sdl2==0.3.1",
     "Kivy-Garden==0.1.4",
     "MarkupSafe==2.0.1",
     "packaging==21.0",
     "Pygments==2.10.0",
     "pymongo==3.12.0",
     "pyparsing==2.4.7",
+    "pypiwin32==223",
     "python-dotenv==0.19.0",
     "pytz==2021.1",
+    "pywin32==301",
     "requests==2.26.0",
     "snowballstemmer==2.1.0",
     "Sphinx==4.2.0",
@@ -51,7 +56,7 @@ except subprocess.CalledProcessError:
 
 
 class Requirement:
-    PKG_NAME_RE = re.compile("(?:[a-zA-Z][a-zA-Z0-9_-]*)?[a-zA-Z0-9]")
+    PKG_NAME_RE = re.compile("(?:[a-zA-Z][a-zA-Z0-9._-]*)?[a-zA-Z0-9]")
     VERSION_RE = re.compile("[a-zA-Z0-9]+")
     CRITERIA = {">=": 0, "=~": 1, "==": 2}
 
