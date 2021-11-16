@@ -4,7 +4,7 @@ import re
 import subprocess
 from typing import List, Literal, Optional, Tuple, Union
 
-from setuptools import setup
+from setuptools import find_packages, setup
 
 REQUIREMENTS = [
     "alabaster==0.7.12",
@@ -135,7 +135,7 @@ class Requirement:
 
     @property
     def extra_args(self):
-        return self.extra_args
+        return self._extra_args
 
     @property
     def major_version(self):
@@ -573,11 +573,11 @@ setup(
     version=VERSION,
     url="https://github.com/Austreelis/devII_2TL1-5",
     install_requires=REQUIREMENTS,
-    packages=[NAME],
+    packages=find_packages(),
     package_dir={NAME: NAME},
     entry_points={
         "console_scripts": [
-            NAME + "=" + NAME,
+            NAME + "=" + NAME + ".__main__:main",
         ],
     },
     classifiers=[

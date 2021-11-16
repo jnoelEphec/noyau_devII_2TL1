@@ -36,8 +36,6 @@ from mephenger.models.mongo_connector import MongoConnector
 from mephenger.models.screens_manager import ScreensManager
 from dotenv import load_dotenv
 
-load_dotenv()
-
 Builder.load_file("{0}/common.kv".format(config.VIEWS_DIR))
 
 
@@ -65,7 +63,13 @@ class Etudiant(Personne):
         super(Etudiant, self).__init__(nom)
 
 
-if __name__ == '__main__':
+def main():
     print("Bienvenue sur notre projet commun !")
 
     Main().run()
+
+
+if __name__ == '__main__':
+    load_dotenv()
+
+    main()
