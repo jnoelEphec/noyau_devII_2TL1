@@ -18,19 +18,19 @@ REQUIREMENTS = [
     "imagesize==1.2.0",
     "Jinja2==3.0.1",
     "Kivy==2.0.0",
-    "kivy-deps.angle==0.3.0",
-    "kivy-deps.glew==0.3.0",
-    "kivy-deps.sdl2==0.3.1",
+    "kivy-deps.angle==0.3.0; sys_platform == 'win32'",
+    "kivy-deps.glew==0.3.0; sys_platform == 'win32'",
+    "kivy-deps.sdl2==0.3.1; sys_platform == 'win32'",
     "Kivy-Garden==0.1.4",
     "MarkupSafe==2.0.1",
     "packaging==21.0",
     "Pygments==2.10.0",
     "pymongo==3.12.0",
     "pyparsing==2.4.7",
-    "pypiwin32==223",
+    "pypiwin32==223; sys_platform == 'win32'",
     "python-dotenv==0.19.0",
     "pytz==2021.1",
-    "pywin32==301",
+    "pywin32==301; sys_platform == 'win32'",
     "requests==2.26.0",
     "snowballstemmer==2.1.0",
     "Sphinx==4.2.0",
@@ -66,9 +66,15 @@ class Requirement:
     def __init__(self, r: str):
         package = r
         version = criterion = None
+        extra_args = []
         for c, i in self.CRITERIA.items():
             if c in r:
                 package, version = r.split(c, 1)
+                if ";" in version:
+                    version, extra_args = version.split(";")
+                    if isinstance(extra_args, str):
+                        extra_args = (extra_args,)
+                    extra_args = [arg.strip() for arg in extra_args]
                 version = version.split(".")
                 criterion = i
         if not self.PKG_NAME_RE.fullmatch(package):
@@ -82,6 +88,7 @@ class Requirement:
         self._package = package
         self._version = version
         self._criterion = criterion
+        self._extra_args = tuple(extra_args)
         self._str = r
 
     def __str__(self):
@@ -125,6 +132,10 @@ class Requirement:
     @property
     def criterion(self) -> Optional[Literal[0, 1, 2]]:
         return self._criterion
+
+    @property
+    def extra_args(self):
+        return self.extra_args
 
     @property
     def major_version(self):
@@ -251,8 +262,13 @@ class Requirement:
                 f"{'.'.join(self.version)} to non-compatible version "
                 f"{o.version}"
             )
+        extra_args = []
+        for arg in self.extra_args + o.extra_args:
+            if arg not in extra_args:
+                extra_args.append(arg)
         return Requirement(
             f"{o.package}{self.criteria(o.criterion)}{'.'.join(o.version)}"
+            + (";" + ";".join(extra_args) if extra_args else "")
         )
 
 
