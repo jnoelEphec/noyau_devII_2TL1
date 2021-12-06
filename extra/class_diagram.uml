@@ -83,7 +83,9 @@ class Session {
     --
     +{static} log_in(user: User, password: str) -> Session
     +add_to_group(group: Group, user: User)
-    +create_group()
+    +create_group() -> Group
+    +conversations() -> List[Conversation]
+    +current_conversation() -> Conversation
     +log_off()
     +remove_from_group(group: Group, user: User)
     +send(to: Conversation, msg: Message)
