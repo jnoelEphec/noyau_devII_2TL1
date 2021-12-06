@@ -6,6 +6,26 @@ skinparam class {
     BorderColor grey
 }
 
+title
+    UML Diagram
+    <i>Group 2TL1-5</i>
+end title
+
+legend bottom center
+    Une <i>Session</i> est créée à la connection d'un <i>User</i>. Elle permettra à l'utilisateur connecté de lister et
+    manipuler ses <i>Conversation</i>s, d'y envoyer des <i>Message</i>s et d'en créer de nouvelles.
+
+    Chaque conversation peut être un <i>Group</i> (une conversation entre un nombre arbitraire d'<i>User</i>s en plus
+    de l'utilisateur connecté) ou une conversation <i>Private</i> (entre l'utilisateur connecté et un autre
+    <i>User</i>). Les conversations permettent à l'utilisateur d'y envoyer des messages et de lister leurs membres. Un
+    des utilisateurs d'un groupe est l'owner, c'est-à-dire la personne ayant le plus de droits dans le groupe
+    (Notamment, c'est le seul utilisateur autorisé à retirer des membres arbitraire d'un groupe, les autres membres ne
+    pouvant que se retirer eux-même).
+
+    Chaque conversation possède un nombre arbitraire de <i>Message</i>s, envoyé par un des utilisateurs membre de la
+    conversation.
+end legend
+
 abstract class Conversation {
     +id: int readOnly
     -messages: List[Message] ordered
