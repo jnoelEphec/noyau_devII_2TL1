@@ -1,23 +1,21 @@
 from mephenger.exceptions.base import MephengerException
 
-__all__ = ["TimeoutExpired", "WouldBlock"]
 
-
-class TimeoutExpired(MephengerException):
+class NoSuchItem(MephengerException):
     @staticmethod
     def code() -> int:
-        return 124
+        return 127
 
     @staticmethod
     def description() -> str:
-        return "Timeout expired"
+        return "No such item"
 
 
-class WouldBlock(MephengerException):
+class IncompleteItem(MephengerException):
     @staticmethod
     def code() -> int:
-        return 123
+        return 122
 
     @staticmethod
     def description() -> str:
-        return "Would block"
+        return "Item is incomplete"

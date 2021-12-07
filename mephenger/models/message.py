@@ -6,14 +6,11 @@
     dans un channel.
     ----- CODE DE LA CLASSE A IMPLEMENTER -----
 """
-from typing import Optional
-
 from mephenger.exceptions import NoSuchItem, TimeoutExpired
 from mephenger.libs import temp_db
-from mephenger.models import Conversation, Model
+from mephenger.models.conversation import Conversation
+from mephenger.models.model import Model
 from mephenger.models.user import User
-
-__all__ = ["Message"]
 
 
 class Message(Model):

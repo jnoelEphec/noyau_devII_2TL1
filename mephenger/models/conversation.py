@@ -9,9 +9,8 @@ from typing import Iterable, Optional
 
 from mephenger.exceptions import NoSuchItem, TimeoutExpired
 from mephenger.libs import temp_db
-from mephenger.models import Model, User
-
-__all__ = ["Conversation"]
+from mephenger.models.model import Model
+from mephenger.models.user import User
 
 
 class Conversation(Model):

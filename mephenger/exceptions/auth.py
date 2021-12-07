@@ -1,4 +1,4 @@
-from mephenger.exceptions import MephengerException
+from mephenger.exceptions.base import MephengerException
 
 __all__ = ["NotAMember", "IncorrectPassword"]
 
