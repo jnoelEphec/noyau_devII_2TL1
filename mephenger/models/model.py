@@ -2,6 +2,30 @@ from abc import ABC, abstractmethod
 
 
 class Model(ABC):
+    @staticmethod
+    @abstractmethod
+    def fetch_by_id(id: str) -> 'Model':
+        """
+        Fetch a `Model` from the database.
+
+        # Arguments
+
+        - id: The id of the `Model` to fetch.
+
+        # Returns
+
+        The fetched `Model`.
+
+        # Errors
+
+        Raises a `TimeoutExpired` exception if the operation takes longer than
+        the configured timeout.
+
+        Raises a `NoSuchItem` exception if no `Model` with given `id` is present
+        in the database.
+        """
+        pass
+
     @property
     @abstractmethod
     def json(self) -> dict:

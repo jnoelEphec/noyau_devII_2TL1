@@ -14,33 +14,14 @@ from mephenger.models.model import Model
 
 class User(Model):
     @staticmethod
-    def fetch_by_id(name: str):
-        """
-        Fetch an `User` from the database.
-
-        # Arguments
-
-        - name: The name of the `Message` to fetch.
-
-        # Returns
-
-        The fetched `User`.
-
-        # Errors
-
-        Raises a `TimeoutExpired` exception if the operation takes longer than
-        the configured timeout.
-
-        Raises a `NoSuchItem` exception if no user with given `name` is present
-        in the database.
-        """
+    def fetch_by_id(id: str) -> 'User':
         try:
             users = temp_db.load()["users"]
         except TimeoutExpired:
-            raise TimeoutExpired(f"Couldn't fetch user {name}")
-        if name not in users:
-            raise NoSuchItem(f"Couldn't fetch user {name}")
-        return User(name, users[name]["pseudo"])
+            raise TimeoutExpired(f"Couldn't fetch user {id}")
+        if id not in users:
+            raise NoSuchItem(f"Couldn't fetch user {id}")
+        return User(id, users[id]["pseudo"])
 
     def __init__(self, id: str, pseudo: str, password: Optional[str] = None):
         if password is not None and len(password) < 1:

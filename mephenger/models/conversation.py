@@ -16,25 +16,6 @@ from mephenger.models.user import User
 class Conversation(Model):
     @staticmethod
     def fetch_by_id(id: str) -> 'Conversation':
-        """
-        Fetch a `Conversation` from the database.
-
-        # Arguments
-
-        - id: The id of the `Conversation` to fetch.
-
-        # Returns
-
-        The fetched `Conversation`.
-
-        # Errors
-
-        Raises a `TimeoutExpired` exception if the operation takes longer than
-        the configured timeout.
-
-        Raises a `NoSuchItem` exception if no conversation with given `id` is
-        present in the database.
-        """
         try:
             conversations = temp_db.load()["conversations"]
         except TimeoutExpired:
