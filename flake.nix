@@ -14,9 +14,7 @@
         overlays = [ devshell.overlay ];
       });
 
-      pythonEnv = pkgs.python39.withPackages (pkgs: with pkgs; [
-        kivy
-      ]);
+      pythonEnv = pkgs.python39.withPackages (pkgs: with pkgs; [ kivy ]);
 
     in {
       devShell.${system} = pkgs.devshell.fromTOML ./devshell.toml;

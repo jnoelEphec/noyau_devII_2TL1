@@ -11,7 +11,11 @@ packages = [
 
 [[env]]
 name = "PYTHONPATH"
-prefix = "$DEVSHELL_DIR/lib/python3.9/site-packages"
+prefix = '"$DEVSHELL_DIR"/lib/python3.9/site-packages'
+
+[[env]]
+name = "PYTHONPATH"
+prefix = '"$PRJ_ROOT"'
 
 [[env]]
 name = "PYTHON_VENV_DIR"
@@ -44,6 +48,18 @@ text = '''
 if ! ps ax | rg "[b]lackd.*$BLACKD_PORT" 1>/dev/null; then
   blackd --bind-host localhost --bind-port "$BLACKD_PORT" & 2>/dev/null 1>&2
 fi
+
+'''
+
+[[commands]]
+name = "mephenger"
+category = "Python commands"
+help = "A chat application"
+command = '''
+
+prev_dir="$(pwd)"
+cd "$PRJ_ROOT"
+python -m mephenger $@ && cd "$prev_dir" || cd "$prev_dir"
 
 '''
 
