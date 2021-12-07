@@ -16,3 +16,4 @@ ROOT_DIR = os.environ["PRJ_ROOT"]
 PUBLIC_DIR = os.path.join(ROOT_DIR, 'public')
 IMG_DIR = os.path.join(PUBLIC_DIR, 'images')
 VIEWS_DIR = os.path.join(PUBLIC_DIR, 'views')
+TMP_DB_FILE = os.path.join(PUBLIC_DIR, 'tmp_db.json')
