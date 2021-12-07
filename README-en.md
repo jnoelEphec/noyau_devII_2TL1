@@ -49,8 +49,8 @@ mephenger               # Run the app
 > Note: Only supported on Unix platforms
 
 This project is a [nix flake](https://nixos.wiki/wiki/Flakes) and provides a
-[devshell](https://github.com/numtide/devshell), allowing developers to work
-in a controlled environment.
+[devshell](https://github.com/numtide/devshell), allowing developers to work in
+a controlled environment.
 
 Installing nix:
 
@@ -67,16 +67,10 @@ Entering the development shell:
 nix develop
 ```
 
-Running tests:
-
-```shell
-nix check
-```
-
 Running the app:
 
 ```shell
-nix run
+nix develop -c mephenger
 ```
 
 More in the [nix manual](https://nixos.org/manual/nix/stable/).
