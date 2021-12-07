@@ -1,10 +1,11 @@
+from __future__ import annotations
 from abc import ABC, abstractmethod
 
 
 class Model(ABC):
     @staticmethod
     @abstractmethod
-    def fetch_by_id(id: str) -> 'Model':
+    def fetch_by_id(id: str) -> Model:
         """
         Fetch a `Model` from the database.
 
@@ -47,7 +48,7 @@ class Model(ABC):
         pass
 
     @abstractmethod
-    def db_fetch(self) -> 'Model':
+    def db_fetch(self) -> Model:
         """
         Update this object's state from the database.
 

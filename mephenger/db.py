@@ -1,3 +1,4 @@
+from __future__ import annotations
 from pymongo import MongoClient
 
 from mephenger import config
@@ -27,7 +28,7 @@ class MongoConnector:
         )
         self._db = client['ephecom']
 
-    def __enter__(self) -> 'MongoConnector':
+    def __enter__(self) -> MongoConnector:
         return self._db
 
     def __exit__(self):

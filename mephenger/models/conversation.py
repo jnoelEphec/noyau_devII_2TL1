@@ -5,6 +5,7 @@
     Ce fichier contient une classe représentant un channel.
     ----- CODE DE LA CLASSE A IMPLEMENTER -----
 """
+from __future__ import annotations
 from typing import Iterable, Optional
 
 from mephenger.exceptions import NoSuchItem, TimeoutExpired
@@ -15,7 +16,7 @@ from mephenger.models.user import User
 
 class Conversation(Model):
     @staticmethod
-    def fetch_by_id(id: str) -> 'Conversation':
+    def fetch_by_id(id: str) -> Conversation:
         try:
             conversations = temp_db.load()["conversations"]
         except TimeoutExpired:
@@ -95,7 +96,7 @@ class Conversation(Model):
         except TimeoutExpired:
             raise TimeoutExpired(f"Couldn't push conversation {self.id}")
 
-    def db_fetch(self) -> 'Conversation':
+    def db_fetch(self) -> Conversation:
         myself = Conversation.fetch_by_id(self.id)
         self._members = myself._members
         self._owner = myself._owner

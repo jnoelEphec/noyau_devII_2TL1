@@ -6,6 +6,8 @@
     dans un channel.
     ----- CODE DE LA CLASSE A IMPLEMENTER -----
 """
+from __future__ import annotations
+
 from mephenger.exceptions import NoSuchItem, TimeoutExpired
 from mephenger.libs import temp_db
 from mephenger.models.conversation import Conversation
@@ -15,7 +17,7 @@ from mephenger.models.user import User
 
 class Message(Model):
     @staticmethod
-    def fetch_by_id(id: str) -> 'Message':
+    def fetch_by_id(id: str) -> Message:
         try:
             messages = temp_db.load()["messages"]
         except TimeoutExpired:
@@ -87,7 +89,7 @@ class Message(Model):
         except TimeoutExpired:
             raise TimeoutExpired(f"Couldn't push message {self.id}")
 
-    def db_fetch(self) -> 'Message':
+    def db_fetch(self) -> Message:
         myself = Message.fetch_by_id(self.id)
         self._sender = myself._sender
         self._text = myself._text

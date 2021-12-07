@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import annotations
 import distutils.cmd
 import re
 import subprocess
@@ -228,7 +229,7 @@ class Requirement:
         force_compatible_version: bool = False,
         force_keep_criterion: bool = False,
         ignore_looser_criterion: bool = False,
-    ) -> 'Requirement':
+    ) -> Requirement:
         """
         Update a requirement from another with a newer version or stricter
         version compatibility requirement.

@@ -5,6 +5,8 @@
     Ce fichier contient une classe représentant un utilisateur.
     ----- CODE DE LA CLASSE A IMPLEMENTER -----
 """
+from __future__ import annotations
+
 from typing import Dict, Optional
 
 from mephenger.exceptions import NoSuchItem, TimeoutExpired
@@ -14,7 +16,7 @@ from mephenger.models.model import Model
 
 class User(Model):
     @staticmethod
-    def fetch_by_id(id: str) -> 'User':
+    def fetch_by_id(id: str) -> User:
         try:
             users = temp_db.load()["users"]
         except TimeoutExpired:
@@ -72,7 +74,7 @@ class User(Model):
         except TimeoutExpired:
             raise TimeoutExpired(f"Couldn't push user {self.id}")
 
-    def db_fetch(self) -> 'User':
+    def db_fetch(self) -> User:
         myself = User.fetch_by_id(self.id)
         self._id = myself._id
         return self

@@ -1,3 +1,4 @@
+from __future__ import annotations
 from hmac import compare_digest
 from typing import Optional
 
@@ -9,7 +10,7 @@ from mephenger.models import Conversation, User
 class Session:
 
     @staticmethod
-    def log_in(user: User, password: str) -> 'Session':
+    def log_in(user: User, password: str) -> Session:
         users = temp_db.load()["users"]
 
         if user.id not in users:
