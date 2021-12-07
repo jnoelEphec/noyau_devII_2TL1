@@ -40,17 +40,24 @@ class User(Model):
             raise TimeoutExpired(f"Couldn't fetch user {name}")
         if name not in users:
             raise NoSuchItem(f"Couldn't fetch user {name}")
-        return User(name)
+        return User(name, users[name]["pseudo"])
 
-    def __init__(self, name: str, password: Optional[str] = None):
+    def __init__(self, name: str, pseudo: str, password: Optional[str] = None):
         if password is not None and len(password) < 1:
             raise ValueError("User password must be non-empty")
+        if len(pseudo) < 1:
+            raise ValueError("User pseudo must be non-empty")
         self._name = name
+        self._pseudo = pseudo
         self._password = None if password is None else hash(password)
 
     @property
     def name(self):
         return self._name
+
+    @property
+    def pseudo(self):
+        return self._pseudo
 
     @property
     def password(self):
@@ -64,11 +71,12 @@ class User(Model):
 
     @property
     def json(self) -> Dict:
-        if self._password is None:
-            return {}
-        return {
-            "password": self._password,
+        json = {
+            "pseudo": self.pseudo
         }
+        if self._password is not None:
+            json["password"] = self._password
+        return json
 
     def db_push(self):
         def update(db):
