@@ -12,6 +12,12 @@ R, G, B, = MAIN_COLOR
 BG_COLOR_LEVEL_1 = (R, G, B, 1)
 TEXT_COLOR = (1, 1, 1, 1)
 
+DB_CERT = os.environ["MEPHENGER_DB_CERT"]
+DB_URI = os.environ["MEPHENGER_DB_URI"] if "MEPHENGER_DB_URI" in os.environ \
+    else "mongodb+srv://cluster0.5i6qo.gcp.mongodb.net/ephecom" \
+         "?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true" \
+         "&w=majority&ssl_cert_reqs=CERT_NONE"
+
 ROOT_DIR = os.environ["PRJ_ROOT"]
 PUBLIC_DIR = os.path.join(ROOT_DIR, 'public')
 IMG_DIR = os.path.join(PUBLIC_DIR, 'images')
