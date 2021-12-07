@@ -12,12 +12,12 @@ class Session:
     def log_in(user: User, password: str) -> 'Session':
         users = temp_db.load()["users"]
 
-        if user.name not in users:
-            raise NoSuchItem(f"Couldn't log user {user.name} in")
+        if user.id not in users:
+            raise NoSuchItem(f"Couldn't log user {user.id} in")
         # TODO: Use a stronger hash than python's builtin
-        if compare_digest(hash(password), users[user.name]["password"]):
+        if compare_digest(hash(password), users[user.id]["password"]):
             return Session(user)
-        raise IncorrectPassword(f"Couldn't log user {user.name} in")
+        raise IncorrectPassword(f"Couldn't log user {user.id} in")
 
     def __init__(self, user: User):
         self._user = user

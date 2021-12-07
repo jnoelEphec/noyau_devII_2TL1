@@ -42,7 +42,7 @@ class Conversation(Model):
         if id not in conversations:
             raise NoSuchItem(f"Couldn't fetch conversation {id}")
 
-        members_dict = {name: User.fetch_by_name(name)
+        members_dict = {name: User.fetch_by_id(name)
                         for name in conversations[id]["members"]}
         owner = None
         name = None
@@ -96,8 +96,8 @@ class Conversation(Model):
     @property
     def json(self) -> dict:
         return {
-            "members": [m.name for m in self.members],
-            "owner": self.owner.name,
+            "members": [m.id for m in self.members],
+            "owner": self.owner.id,
             "name": self.name,
         }
 

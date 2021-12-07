@@ -44,7 +44,7 @@ class Message(Model):
 
         return Message(
             id,
-            User.fetch_by_name(messages[id]["sender"]),
+            User.fetch_by_id(messages[id]["sender"]),
             Conversation.fetch_by_id(messages[id]["conversation"]),
             messages[id]["text"]
         )
@@ -88,7 +88,7 @@ class Message(Model):
     @property
     def json(self) -> dict:
         return {
-            "sender": self.sender.name,
+            "sender": self.sender.id,
             "conversation": self.conversation.id,
             "text": self.text,
         }

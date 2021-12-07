@@ -14,7 +14,7 @@ from mephenger.models.model import Model
 
 class User(Model):
     @staticmethod
-    def fetch_by_name(name: str):
+    def fetch_by_id(name: str):
         """
         Fetch an `User` from the database.
 
@@ -42,18 +42,18 @@ class User(Model):
             raise NoSuchItem(f"Couldn't fetch user {name}")
         return User(name, users[name]["pseudo"])
 
-    def __init__(self, name: str, pseudo: str, password: Optional[str] = None):
+    def __init__(self, id: str, pseudo: str, password: Optional[str] = None):
         if password is not None and len(password) < 1:
             raise ValueError("User password must be non-empty")
         if len(pseudo) < 1:
             raise ValueError("User pseudo must be non-empty")
-        self._name = name
+        self._id = id
         self._pseudo = pseudo
         self._password = None if password is None else hash(password)
 
     @property
-    def name(self):
-        return self._name
+    def id(self):
+        return self._id
 
     @property
     def pseudo(self):
@@ -80,8 +80,8 @@ class User(Model):
 
     def db_push(self):
         def update(db):
-            db["users"][self.name] = {
-                **db["users"].get(self.name, {}),
+            db["users"][self.id] = {
+                **db["users"].get(self.id, {}),
                 **self.json,
             }
             return db
@@ -89,9 +89,9 @@ class User(Model):
         try:
             temp_db.update(update)
         except TimeoutExpired:
-            raise TimeoutExpired(f"Couldn't push user {self.name}")
+            raise TimeoutExpired(f"Couldn't push user {self.id}")
 
     def db_fetch(self) -> 'User':
-        myself = User.fetch_by_name(self.name)
-        self._name = myself._name
+        myself = User.fetch_by_id(self.id)
+        self._id = myself._id
         return self
