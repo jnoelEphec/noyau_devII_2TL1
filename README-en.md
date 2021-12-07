@@ -34,6 +34,13 @@ define the `PRJ_ROOT` environment variable, e.g. in a `.env` file:
 PRJ_ROOT=path/to/projet/root
 ```
 
+You may also need to configure the database URI, and specify a certificate file:
+
+```shell
+MEPHENGER_DB_URI=mongodb://my.database.uri
+MEPHENGER_DB_CERT=/path/to/cert.pem
+```
+
 ---
 
 # Build and install pypy package

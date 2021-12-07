@@ -35,6 +35,14 @@ dans un ficher `.env`:
 PRJ_ROOT=chemin/vers/le/dossier/du/projet
 ```
 
+Il faudra aussi potentiellement configurer une URI et le chemin vers un
+certificat pour accéder à la base de données:
+
+```shell
+MEPHENGER_DB_URI=mongodb://my.database.uri
+MEPHENGER_DB_CERT=/path/to/cert.pem
+```
+
 ---
 
 # Construire et installer le packet pypy
