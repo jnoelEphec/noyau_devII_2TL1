@@ -56,25 +56,25 @@ class Message(Model):
         self._text = text
 
     @property
-    def id(self):
+    def id(self) -> str:
         """
         The unique identifier of this message.
         """
         return self._id
 
     @property
-    def sender(self):
+    def sender(self) -> User:
         """
         The user that sent this message.
         """
         return self._sender
 
     @property
-    def conversation(self):
+    def conversation(self) -> Conversation:
         return self._conv
 
     @property
-    def text(self):
+    def text(self) -> str:
         """
         The message's text content.
         """

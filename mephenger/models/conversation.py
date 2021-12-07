@@ -78,19 +78,19 @@ class Conversation(Model):
         self._name = name
 
     @property
-    def id(self):
+    def id(self) -> str:
         return self._id
 
     @property
-    def members(self):
+    def members(self) -> tuple[User]:
         return tuple(self.members)
 
     @property
-    def owner(self):
+    def owner(self) -> User:
         return self._owner
 
     @property
-    def name(self):
+    def name(self) -> str:
         return self._name
 
     @property
