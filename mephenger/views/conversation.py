@@ -16,7 +16,7 @@ from kivy.uix.scrollview import ScrollView
 
 from mephenger import config
 from mephenger.libs.bot.commands import Commands
-from mephenger.models.message import Message
+from mephenger.legacy.models.message import Message
 
 
 Builder.load_file("{0}/conversation.kv".format(config.VIEWS_DIR))
