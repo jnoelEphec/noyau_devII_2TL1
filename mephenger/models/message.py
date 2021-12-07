@@ -15,7 +15,7 @@ from mephenger.models.user import User
 
 class Message(Model):
     @staticmethod
-    def fetch_by_id(id: int) -> 'Message':
+    def fetch_by_id(id: str) -> 'Message':
         """
         Fetch a `Message` from the database.
 
@@ -49,7 +49,7 @@ class Message(Model):
             messages[id]["text"]
         )
 
-    def __init__(self, id: int, sender: User, conv: Conversation, text: str):
+    def __init__(self, id: str, sender: User, conv: Conversation, text: str):
         self._id = id
         self._sender = sender
         self._conv = conv

@@ -15,7 +15,7 @@ from mephenger.models.user import User
 
 class Conversation(Model):
     @staticmethod
-    def fetch_by_id(id: int) -> 'Conversation':
+    def fetch_by_id(id: str) -> 'Conversation':
         """
         Fetch a `Conversation` from the database.
 
@@ -53,7 +53,7 @@ class Conversation(Model):
         return Conversation(id, members_dict.values(), owner, name)
 
     def __init__(
-        self, id: Optional[int], members: Iterable[User],
+        self, id: Optional[str], members: Iterable[User],
         owner: Optional[User] = None, name: Optional[str] = None
     ):
         members = list(members)
