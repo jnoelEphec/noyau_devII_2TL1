@@ -14,42 +14,21 @@
         overlays = [ devshell.overlay ];
       });
 
-      pname = "chat";
-
-      pythonPkg = with pkgs.python39.pkgs; buildPythonPackage rec {
-        inherit pname;
-        version = "0.1.0";
-
-        src = ./.;
-
-        buildInputs = [ kivy ];
-        propagateBuildInputs = [ kivy ];
-
-        doCheck = false;
-
-        meta.homepage = "https://github.com/Austreelis/prejet-dev2-2tl1-5";
-      };
-
       pythonEnv = pkgs.python39.withPackages (pkgs: with pkgs; [
         kivy
-        pythonPkg
       ]);
 
     in {
       devShell.${system} = pkgs.devshell.fromTOML ./devshell.toml;
 
-      packages.${system}.${pname} = pythonPkg;
-
-      defaultPackage.${system} = self.packages.${system}.${pname};
-
-      apps.${system}.${pname} = {
+      apps.${system}.mephenger = {
         type = "app";
-        program = "${pythonEnv}/bin/python -m ${pname}";
+        program = "${pythonEnv}/bin/python -m ${self}/mephenger";
       };
 
-      defaultApp = {
+      defaultApp.${system} = {
         type = "app";
-        program = self.apps.${system}.${pname};
+        program = self.apps.${system}.mephenger.program;
       };
     };
   in with builtins; foldl'
