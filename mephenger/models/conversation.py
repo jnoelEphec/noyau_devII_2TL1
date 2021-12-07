@@ -16,26 +16,26 @@ from mephenger.models.user import User
 
 class Conversation(Model):
     @staticmethod
-    def fetch_by_id(id: str) -> Conversation:
+    def fetch_by_id(_id: str) -> Conversation:
         try:
             conversations = temp_db.load()["conversations"]
         except TimeoutExpired:
-            raise TimeoutExpired(f"Couldn't fetch conversation {id}")
-        if id not in conversations:
-            raise NoSuchItem(f"Couldn't fetch conversation {id}")
+            raise TimeoutExpired(f"Couldn't fetch conversation {_id}")
+        if _id not in conversations:
+            raise NoSuchItem(f"Couldn't fetch conversation {_id}")
 
         members_dict = {name: User.fetch_by_id(name)
-                        for name in conversations[id]["members"]}
+                        for name in conversations[_id]["members"]}
         owner = None
         name = None
-        if len(conversations[id]["members"]) > 2:
-            owner = members_dict[conversations[id]["owner"]]
-            name = conversations[id]["name"]
+        if len(conversations[_id]["members"]) > 2:
+            owner = members_dict[conversations[_id]["owner"]]
+            name = conversations[_id]["name"]
 
-        return Conversation(id, members_dict.values(), owner, name)
+        return Conversation(_id, members_dict.values(), owner, name)
 
     def __init__(
-        self, id: Optional[str], members: Iterable[User],
+        self, _id: Optional[str], members: Iterable[User],
         owner: Optional[User] = None, name: Optional[str] = None
     ):
         members = list(members)
@@ -54,7 +54,7 @@ class Conversation(Model):
                 "a name"
             )
 
-        self._id = id
+        self._id = _id
         self._members: list[User] = members
         self._owner = owner
         self._name = name

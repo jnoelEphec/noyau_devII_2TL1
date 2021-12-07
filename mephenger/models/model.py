@@ -5,13 +5,13 @@ from abc import ABC, abstractmethod
 class Model(ABC):
     @staticmethod
     @abstractmethod
-    def fetch_by_id(id: str) -> Model:
+    def fetch_by_id(_id: str) -> Model:
         """
         Fetch a `Model` from the database.
 
         # Arguments
 
-        - id: The id of the `Model` to fetch.
+        - _id: The id of the `Model` to fetch.
 
         # Returns
 

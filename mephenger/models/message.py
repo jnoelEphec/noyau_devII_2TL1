@@ -17,23 +17,23 @@ from mephenger.models.user import User
 
 class Message(Model):
     @staticmethod
-    def fetch_by_id(id: str) -> Message:
+    def fetch_by_id(_id: str) -> Message:
         try:
             messages = temp_db.load()["messages"]
         except TimeoutExpired:
-            raise TimeoutExpired(f"Couldn't fetch message {id}")
-        if id not in messages:
-            raise NoSuchItem(f"Couldn't fetch message {id}")
+            raise TimeoutExpired(f"Couldn't fetch message {_id}")
+        if _id not in messages:
+            raise NoSuchItem(f"Couldn't fetch message {_id}")
 
         return Message(
-            id,
-            User.fetch_by_id(messages[id]["sender"]),
-            Conversation.fetch_by_id(messages[id]["conversation"]),
-            messages[id]["text"]
+            _id,
+            User.fetch_by_id(messages[_id]["sender"]),
+            Conversation.fetch_by_id(messages[_id]["conversation"]),
+            messages[_id]["text"]
         )
 
-    def __init__(self, id: str, sender: User, conv: Conversation, text: str):
-        self._id = id
+    def __init__(self, _id: str, sender: User, conv: Conversation, text: str):
+        self._id = _id
         self._sender = sender
         self._conv = conv
         self._text = text

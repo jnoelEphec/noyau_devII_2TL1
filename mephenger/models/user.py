@@ -16,21 +16,21 @@ from mephenger.models.model import Model
 
 class User(Model):
     @staticmethod
-    def fetch_by_id(id: str) -> User:
+    def fetch_by_id(_id: str) -> User:
         try:
             users = temp_db.load()["users"]
         except TimeoutExpired:
-            raise TimeoutExpired(f"Couldn't fetch user {id}")
-        if id not in users:
-            raise NoSuchItem(f"Couldn't fetch user {id}")
-        return User(id, users[id]["pseudo"])
+            raise TimeoutExpired(f"Couldn't fetch user {_id}")
+        if _id not in users:
+            raise NoSuchItem(f"Couldn't fetch user {_id}")
+        return User(_id, users[_id]["pseudo"])
 
-    def __init__(self, id: str, pseudo: str, password: Optional[str] = None):
+    def __init__(self, _id: str, pseudo: str, password: Optional[str] = None):
         if password is not None and len(password) < 1:
             raise ValueError("User password must be non-empty")
         if len(pseudo) < 1:
             raise ValueError("User pseudo must be non-empty")
-        self._id = id
+        self._id = _id
         self._pseudo = pseudo
         self._password = None if password is None else hash(password)
 
