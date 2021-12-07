@@ -139,3 +139,6 @@ certif*.pem
 *.svg
 *.png
 *.jpg
+
+# Temporary database
+/public/tmp_db.json
