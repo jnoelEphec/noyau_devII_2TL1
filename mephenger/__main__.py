@@ -29,8 +29,9 @@ from kivy.lang import Builder
 
 from mephenger import config
 
-from mephenger.screens_manager import ScreensManager
 from dotenv import load_dotenv
+
+from mephenger.legacy.models.screens_manager import ScreensManager
 
 Builder.load_file("{0}/common.kv".format(config.VIEWS_DIR))
 
