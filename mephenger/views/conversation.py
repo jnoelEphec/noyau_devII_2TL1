@@ -14,7 +14,7 @@ from kivy.uix.label import Label
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.scrollview import ScrollView
 
-from mephenger.config import config
+from mephenger import config
 from mephenger.libs.bot.commands import Commands
 from mephenger.models.message import Message
 

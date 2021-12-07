@@ -11,7 +11,7 @@ from kivy.uix.label import Label
 from kivy.uix.screenmanager import ScreenManagerException
 from kivy.uix.scrollview import ScrollView
 
-from mephenger.config import config
+from mephenger import config
 from mephenger.libs.sorting.dict_sort import dict_sort
 from mephenger.legacy.models.channel import Channel
 from mephenger.legacy.models.group import Group

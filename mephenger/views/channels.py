@@ -14,7 +14,7 @@ from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.screenmanager import ScreenManagerException
 from kivy.uix.scrollview import ScrollView
 
-from mephenger.config import config
+from mephenger import config
 from mephenger.legacy.models.screens_manager import ScreensManager
 
 

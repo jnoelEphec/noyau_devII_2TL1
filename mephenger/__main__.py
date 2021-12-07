@@ -28,12 +28,12 @@ from kivy.app import App
 from kivy.lang import Builder
 from pymongo import MongoClient
 
-import mephenger.config.config as config
 import pymongo as pymongo
 import os
+from mephenger import config
 
-from mephenger.models.mongo_connector import MongoConnector
-from mephenger.models.screens_manager import ScreensManager
+from mephenger.legacy.models.mongo_connector import MongoConnector
+from mephenger.legacy.models.screens_manager import ScreensManager
 from dotenv import load_dotenv
 
 Builder.load_file("{0}/common.kv".format(config.VIEWS_DIR))
