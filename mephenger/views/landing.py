@@ -14,7 +14,7 @@ from kivy.lang import Builder
 from kivy.uix.screenmanager import Screen
 
 from mephenger.config import config
-from mephenger.models.screens_manager import ScreensManager
+from mephenger.legacy.models.screens_manager import ScreensManager
 from mephenger.views.conversation import Conversation
 from mephenger.views.teams_container import TeamsContainer
 from mephenger.views.channels import ChannelsContainer

@@ -13,10 +13,10 @@ from kivy.uix.scrollview import ScrollView
 
 from mephenger.config import config
 from mephenger.libs.sorting.dict_sort import dict_sort
-from mephenger.models.channel import Channel
-from mephenger.models.group import Group
-from mephenger.models.screens_manager import ScreensManager
-from mephenger.models.team import Team
+from mephenger.legacy.models.channel import Channel
+from mephenger.legacy.models.group import Group
+from mephenger.legacy.models.screens_manager import ScreensManager
+from mephenger.legacy.models.team import Team
 
 
 Builder.load_file("{0}/teams.kv".format(config.VIEWS_DIR))
