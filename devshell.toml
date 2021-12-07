@@ -17,6 +17,10 @@ prefix = "$DEVSHELL_DIR/lib/python3.9/site-packages"
 name = "PYTHON_VENV_DIR"
 eval = "$PRJ_ROOT/env"
 
+[[env]]
+name = "MEPHENGER_DB_CERT"
+eval = "$PRJ_ROOT/mongo-cert.pem"
+
 [devshell.startup.python-venv]
 text = '''
 
