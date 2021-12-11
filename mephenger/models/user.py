@@ -24,9 +24,12 @@ class User(Model):
         if _id not in users:
             raise NoSuchItem(f"Couldn't fetch user {_id}")
         if password:
-            return User(_id, users[_id]["pseudo"], users[_id]["password"])
+            user = User(_id, users[_id]["pseudo"], users[_id]["password"])
         else:
-            return User(_id, users[_id]["pseudo"])
+            user = User(_id, users[_id]["pseudo"])
+        user._is_in_db = True
+        user._up_to_date = True
+        return user
 
     def __init__(
         self, _id: Optional[str], pseudo: str, password: Optional[str] = None
@@ -39,10 +42,7 @@ class User(Model):
         super(User, self).__init__(_id)
         self._pseudo = pseudo
         self._password = None if password is None else hash(password)
-
-    @property
-    def id(self):
-        return self._id
+        self._is_in_db = False
 
     @property
     def pseudo(self):
@@ -67,6 +67,10 @@ class User(Model):
             json["password"] = self._password
         return json
 
+    @property
+    def is_in_db(self) -> bool:
+        return self._is_in_db
+
     def db_push(self):
         def update(db):
             db["users"][self.id] = {
@@ -75,11 +79,9 @@ class User(Model):
             }
             return db
 
-        if self.id is None:
-            self._id = temp_db.get_id()
-
         try:
             temp_db.update(update)
+            self._is_in_db = True
             self._up_to_date = True
         except TimeoutExpired:
             raise TimeoutExpired(f"Couldn't push user {self.id}")
@@ -87,5 +89,6 @@ class User(Model):
     def db_fetch(self) -> User:
         myself = User.fetch_by_id(self.id)
         self._id = myself._id
+        self._is_in_db = True
         self._up_to_date = True
         return self

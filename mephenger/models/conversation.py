@@ -82,12 +82,11 @@ class Conversation(Model):
             }
             return db
 
-        if self.id is None:
-            self._id = temp_db.get_id()
-
         try:
             temp_db.update(update)
             self._up_to_date = True
+            if self.id is None:
+                self._id = temp_db.get_id()
         except TimeoutExpired:
             raise TimeoutExpired(f"Couldn't push conversation {self.id}")
 
