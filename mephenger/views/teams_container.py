@@ -13,7 +13,7 @@ from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.scrollview import ScrollView
 
-from mephenger import config, Session
+from mephenger import config, get_session
 from mephenger.models import Conversation
 
 Builder.load_file(f"{config.VIEWS_DIR}/teams.kv")
@@ -29,13 +29,14 @@ class EmptyTeams(Label):
 
 class TeamsContainer(ScrollView):
 
-    def __init__(self, session: Session):
+    def __init__(self):
         super(TeamsContainer, self).__init__()
         self.content = self.ids.channels_content
 
         self.content.clear_widgets()
 
         def handle(_, conversations: Optional[list[Conversation]] = None):
+            session = get_session()
             if conversations is None:
                 conversations = session.conversations
             session.landing_screen.display_channels(conversations)

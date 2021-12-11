@@ -2,28 +2,23 @@
 # -*- coding: utf-8 -*-
 
 """
-    Ce fichier représente la classe permettant la navigation entre différentes interfaces.
+    Ce fichier représente la classe permettant la navigation entre
+    différentes interfaces.
 """
 
-from kivy.uix.screenmanager import ScreenManager, NoTransition, ScreenManagerException
+from kivy.uix.screenmanager import (
+    ScreenManager,
+    NoTransition,
+    ScreenManagerException,
+)
 
 
-def singleton(cls, *args, **kw):
-    instances = {}
-
-    def _singleton():
-        if cls not in instances:
-            instances[cls] = cls(*args, **kw)
-        return instances[cls]
-
-    return _singleton
-
-
-@singleton
 class ScreensManager(ScreenManager):
     """
-        Cette classe est utilisée afin de naviguer entre différentes fenêtres du programme.
-        Sachant que cette classe est un "Singleton", elle ne sera instanciée qu'une seule fois
+        Cette classe est utilisée afin de naviguer entre différentes fenêtres
+        du programme.
+        Sachant que cette classe est un "Singleton", elle ne sera instanciée
+        qu'une seule fois
         lors de la première instanciation.
     """
 

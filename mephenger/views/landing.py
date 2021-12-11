@@ -13,7 +13,7 @@
 from kivy.lang import Builder
 from kivy.uix.screenmanager import Screen
 
-from mephenger import config, models, Session
+from mephenger import config, get_session, models
 from mephenger.views.conversation import Conversation
 from mephenger.views.conversation_list import ConversationsContainer
 from mephenger.views.teams_container import TeamsContainer
@@ -23,10 +23,9 @@ Builder.load_file(f"{config.VIEWS_DIR}/landing.kv")
 
 
 class LandingScreen(Screen):
-    def __init__(self, session: Session):
+    def __init__(self):
         super(LandingScreen, self).__init__()
         self.name = "landing"
-        self._session = session
         self.conv_box = self.ids.conversation_box
         self.rooms_box = self.ids.rooms_box
         self.channels_container = None
@@ -37,7 +36,7 @@ class LandingScreen(Screen):
             Gestion des évènements de redirection du Screen.
             :param href: Le nom du Screen vers lequel naviguer.
         """
-        self._session.screens_manager.redirect(href)
+        get_session().screens_manager.redirect(href)
 
     def display_channels(self, team_channels: list):
         """
@@ -49,8 +48,7 @@ class LandingScreen(Screen):
         self.conv_box.clear_widgets()
         self.rooms_box.clear_widgets()
         self.rooms_box.add_widget(
-            self._session,
-            ConversationsContainer(self._session.screens_manager, team_channels)
+            ConversationsContainer(team_channels)
         )
 
     def display_conversation(self, _id: str):
@@ -70,5 +68,5 @@ class LandingScreen(Screen):
             [Base]
             Initialise la liste des "Team" dont l'utilisateur fait partie.
         """
-        self.channels_container = TeamsContainer(self._session)
+        self.channels_container = TeamsContainer()
         self.ids.channels_box.add_widget(self.channels_container)

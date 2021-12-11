@@ -13,7 +13,7 @@ from kivy.uix.label import Label
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.scrollview import ScrollView
 
-from mephenger import config, models, Session
+from mephenger import config, get_session, models
 from mephenger.db import MongoConnector
 from mephenger.libs.bot.commands import Commands
 from mephenger.models import Message, User
@@ -82,11 +82,11 @@ class Conversation(RelativeLayout):
         self.add_widget(self.messages_container)
         self.add_widget(self.inputs_container)
 
-    def send_message(self, session: Session):
+    def send_message(self):
         txt = self.inputs_container.ids.message_input.text
 
         if txt:
-            msg = Message(None, session.user, self._conversation, txt)
+            msg = Message(None, get_session().user, self._conversation, txt)
             self.messages_container.add_message(msg)
             msg.db_push()
 

@@ -28,7 +28,7 @@ from dotenv import load_dotenv
 from kivy.app import App
 from kivy.lang import Builder
 
-from mephenger import config, ScreensManager, Session
+from mephenger import config, ScreensManager, Session, set_session
 
 Builder.load_file("{0}/common.kv".format(config.VIEWS_DIR))
 
@@ -38,6 +38,7 @@ class Main(App):
 
     def build(self):
         session = Session(ScreensManager(), "linus", "torvalds")
+        set_session(session)
         return session.screens_manager
 
 

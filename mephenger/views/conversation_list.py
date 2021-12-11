@@ -13,7 +13,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.scrollview import ScrollView
 
-from mephenger import config, Session
+from mephenger import config, get_session
 from mephenger.models import Conversation
 
 Builder.load_file(f"{config.VIEWS_DIR}/channel.kv")
@@ -37,7 +37,7 @@ class ConversationsListButton(Button):
 
 class ConversationsContainer(ScrollView):
 
-    def __init__(self, session: Session, conversations: list[Conversation]):
+    def __init__(self, conversations: list[Conversation]):
         super(ConversationsContainer, self).__init__()
         self.conversations = conversations
         self.channels_container = self.ids.channels_content
@@ -48,7 +48,7 @@ class ConversationsContainer(ScrollView):
         self.channels_container.add_widget(groups_group)
 
         def handle(_, _id: str):
-            session.landing_screen.display_conversation(_id)
+            get_session().landing_screen.display_conversation(_id)
 
         for conversation in self.conversations:
             conversation_row = ConversationsListButton(
