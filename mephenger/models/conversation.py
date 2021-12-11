@@ -79,6 +79,10 @@ class Conversation(Model):
             "name": self.name,
         }
 
+    @property
+    def is_group(self):
+        return self.owner is not None and self.name is not None
+
     def db_push(self):
         def update(db):
             db["conversations"][self.id] = {
@@ -119,7 +123,7 @@ class Conversation(Model):
         A `PermissionDenied` is raised if `inviter` doesn't have the rights to
         invite `invitee` in the group.
         """
-        if self.owner is None or self.name is None:
+        if not self.is_group:
             raise NotAGroup(
                 f"User {inviter} cannot invite user {invitee} in group {self}"
             )
