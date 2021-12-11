@@ -80,10 +80,12 @@ class User(Model):
 
         try:
             temp_db.update(update)
+            self._up_to_date = True
         except TimeoutExpired:
             raise TimeoutExpired(f"Couldn't push user {self.id}")
 
     def db_fetch(self) -> User:
         myself = User.fetch_by_id(self.id)
         self._id = myself._id
+        self._up_to_date = True
         return self

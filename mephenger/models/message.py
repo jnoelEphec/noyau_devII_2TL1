@@ -86,6 +86,7 @@ class Message(Model):
 
         try:
             temp_db.update(update)
+            self._up_to_date = True
         except TimeoutExpired:
             raise TimeoutExpired(f"Couldn't push message {self.id}")
 
@@ -93,4 +94,5 @@ class Message(Model):
         myself = Message.fetch_by_id(self.id)
         self._sender = myself._sender
         self._text = myself._text
+        self._up_to_date = True
         return self

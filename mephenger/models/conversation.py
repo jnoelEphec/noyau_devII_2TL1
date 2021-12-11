@@ -87,6 +87,7 @@ class Conversation(Model):
 
         try:
             temp_db.update(update)
+            self._up_to_date = True
         except TimeoutExpired:
             raise TimeoutExpired(f"Couldn't push conversation {self.id}")
 
@@ -95,6 +96,7 @@ class Conversation(Model):
         self._members = myself._members
         self._owner = myself._owner
         self._name = myself._name
+        self._up_to_date = True
         return self
 
     def add_member(self, inviter: User, invitee: User):

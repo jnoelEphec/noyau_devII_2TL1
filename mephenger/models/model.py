@@ -30,6 +30,13 @@ class Model(ABC):
 
     def __init__(self, _id: Optional[str]):
         self._id = _id
+        self._up_to_date = _id is not None
+
+    def __setattr__(self, key, value):
+        super(Model, self).__setattr__(key, value)
+        if key is "_up_to_date":
+            return
+        self._up_to_date = False
 
     @property
     def id(self) -> Optional[str]:
@@ -37,6 +44,13 @@ class Model(ABC):
         The unique identifier of this message, if it has one.
         """
         return self._id
+
+    @property
+    def up_to_date(self) -> bool:
+        """
+        Check whether the database is up-to-date with the model's state.
+        """
+        return self._up_to_date
 
     @property
     @abstractmethod
@@ -50,7 +64,10 @@ class Model(ABC):
     def db_push(self):
         """
         Update the database's state of this object. If this model wasn't in the
-        database yet (i.e. it's `id` was still None), update its `id`.
+        database yet (i.e. it's `id` was still None), update its `_id`.
+
+        The model must set its `_up_to_date` member to `True` if and only if
+        the operation is successful.
 
         # Errors
 
@@ -63,6 +80,9 @@ class Model(ABC):
     def db_fetch(self) -> Model:
         """
         Update this object's state from the database.
+
+        The model must set its `_up_to_date` member to `True` if and only if
+        the operation is successful.
 
         # Returns
 
