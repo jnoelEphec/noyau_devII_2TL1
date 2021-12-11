@@ -16,72 +16,70 @@ from kivy.uix.scrollview import ScrollView
 
 from mephenger import config
 from mephenger.legacy.models.screens_manager import ScreensManager
+from mephenger.models import Conversation
 
 Builder.load_file(f"{config.VIEWS_DIR}/channel.kv")
 
 
-class GroupTitleRow(BoxLayout):
+class ConversationTitleRow(BoxLayout):
     pass
 
 
-class GroupLabel(Label):
+class ConversationLabel(Label):
     pass
 
 
-class GroupAddButton(Button):
+class ConversationAddButton(Button):
     pass
 
 
-class ChannelsListButton(Button):
+class ConversationsListButton(Button):
     pass
 
 
-class ChannelsContainer(ScrollView):
-    def __init__(self, channels_list):
-        super(ChannelsContainer, self).__init__()
-        self.channels_list = channels_list
+class ConversationsContainer(ScrollView):
+
+    def __init__(self, conversations: list[Conversation]):
+        super(ConversationsContainer, self).__init__()
+        self.conversations = conversations
         self.channels_container = self.ids.channels_content
         self.sm = ScreensManager()
-        self.landing_screen = self.get_landing_screen()
-
-        self.generate_list_rows()
-
-    def get_landing_screen(self):
         try:
             landing_screen = self.sm.get_screen("landing")
-            return landing_screen
         except ScreenManagerException:
-            return None
+            pass
 
-    def generate_list_rows(self):
-        groups = {}
+        pms_group = self.init_group("Private Messages")
+        groups_group = self.init_group("Groups")
+        self.channels_container.add_widget(pms_group)
+        self.channels_container.add_widget(groups_group)
 
-        for channel in self.channels_list:
-            group_name = channel.group.name
-            if group_name not in groups:
-                group = BoxLayout(orientation="vertical", size_hint_y=None)
-                title_row = GroupTitleRow()
-                title_label = GroupLabel(text=group_name)
-                title_add_btn = GroupAddButton(
-                    on_press=lambda a, _grp=group_name: self.add_new_channel(
-                        _grp
-                    )
-                )
-                title_row.add_widget(title_label)
-                title_row.add_widget(title_add_btn)
-                group.add_widget(title_row)
-                self.channels_container.add_widget(group)
+        def handle(_, _id: str):
+            landing_screen.display_conversation(_id)
 
-                groups[channel.group.name] = group
-
-            channel_name_row = ChannelsListButton(
-                text=channel.name,
-                on_press=lambda a, _id=channel.identifier:
-                self.landing_screen.display_conversation(_id)
+        for conversation in self.conversations:
+            conversation_row = ConversationsListButton(
+                text=conversation.name, on_press=handle
             )
-            groups[group_name].add_widget(channel_name_row)
+            if conversation.is_group:
+                groups_group.add_widget(conversation_row)
+            else:
+                pms_group.add_widget(conversation_row)
 
-    def add_new_channel(self, group_name):
+    def init_group(self, group: str):
+        def handle(_, name: str = group):
+            self.add_new_conversation(name)
+
+        group_box = BoxLayout(orientation="vertical", size_hint_y=None)
+        title_row = ConversationTitleRow()
+        title_label = ConversationLabel(text=group)
+        title_add_btn = ConversationAddButton(on_press=handle)
+        title_row.add_widget(title_label)
+        title_row.add_widget(title_add_btn)
+        group_box.add_widget(title_row)
+        return group_box
+
+    def add_new_conversation(self, group_name):
         """
         Cette méthode permet d'ajouter un nouveau channel dans le groupe
         concerné.

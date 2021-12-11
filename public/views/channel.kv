@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-<GroupTitleRow@BoxLayout>
+<ConversationTitleRow@BoxLayout>
     orientation: "horizontal"
     size_hint_y: None
     height: 75
@@ -12,7 +12,7 @@
             width: .5
             rectangle: self.x, self.y, self.width, 0
 
-<GroupAddButton@Button>
+<ConversationAddButton@Button>
     canvas.before:
         Rectangle:
             size: (25, 25)
@@ -23,7 +23,7 @@
     background_color: (0, 0, 0, 0)
 
 
-<GroupLabel@Label>
+<ConversationLabel@Label>
     font_size: 16
     size_hint: (.75, None)
     height: 75
@@ -32,7 +32,7 @@
     valign: 'bottom'
     padding: (30, 10)
 
-<ChannelsListButton@Button>
+<ConversationsListButton@Button>
     size_hint_y: None
     height: 30
     font_size: 12
@@ -42,7 +42,7 @@
     padding: (50, 0)
     background_color: (0, 0, 0, 0)
 
-<ChannelsContainer@ScrollView>
+<ConversationsContainer@ScrollView>
     # Attention, ceci est du code brut, vous devez le dynamiser !
 
     do_scroll_x: False

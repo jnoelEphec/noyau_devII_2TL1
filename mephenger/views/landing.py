@@ -15,7 +15,7 @@ from kivy.uix.screenmanager import Screen
 
 from mephenger import config
 from mephenger.legacy.models.screens_manager import ScreensManager
-from mephenger.views.channels import ChannelsContainer
+from mephenger.views.channels import ConversationsContainer
 from mephenger.views.conversation import Conversation
 from mephenger.views.teams_container import TeamsContainer
 
@@ -49,7 +49,7 @@ class LandingScreen(Screen):
         """
         self.conv_box.clear_widgets()
         self.rooms_box.clear_widgets()
-        self.rooms_box.add_widget(ChannelsContainer(team_channels))
+        self.rooms_box.add_widget(ConversationsContainer(team_channels))
 
     def display_conversation(self, channel_id: str):
         """
