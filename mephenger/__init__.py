@@ -4,7 +4,7 @@ import os.path
 from mephenger import config, exceptions, legacy, models, views
 from mephenger.session import Session
 
-__all__ = ["config", "exceptions", "models", "Session"]
+__all__ = ["config", "exceptions", "models", "views", "Session"]
 
 # Initialize the temporary database if that's not the case
 if not os.path.exists(config.TMP_DB_FILE):
