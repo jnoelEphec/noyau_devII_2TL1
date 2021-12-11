@@ -37,9 +37,6 @@ class User(Model):
         self._pseudo = pseudo
         self._password = None if password is None else hash(password)
 
-        if _id is None:
-            self.db_push()
-
     @property
     def id(self):
         return self._id
