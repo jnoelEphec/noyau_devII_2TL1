@@ -9,7 +9,12 @@ from __future__ import annotations
 
 from typing import Iterable, Optional
 
-from mephenger.exceptions import NoSuchItem, TimeoutExpired, Todo
+from mephenger.exceptions import (
+    NoSuchItem,
+    NotAGroup,
+    PermissionDenied,
+    TimeoutExpired,
+)
 from mephenger.libs import temp_db
 from mephenger.models.model import Model
 from mephenger.models.user import User
@@ -109,11 +114,17 @@ class Conversation(Model):
 
         # Errors:
 
+        A `NotAGroup` exception is raised if this `Conversation` is not a group.
+
         A `PermissionDenied` is raised if `inviter` doesn't have the rights to
         invite `invitee` in the group.
         """
+        if self.owner is None or self.name is None:
+            raise NotAGroup(
+                f"User {inviter} cannot invite user {invitee} in group {self}"
+            )
         if inviter.id != self.owner.id:
-            raise PermissionError(
+            raise PermissionDenied(
                 f"User {inviter} cannot invite user {invitee} in group {self}"
             )
         self._members.append(invitee)
