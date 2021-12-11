@@ -33,6 +33,41 @@ class MongoConnector:
         self._cache = {"conversations": {}, "messages": {}, "users": {}}
 
     def __enter__(self) -> MongoConnector:
+        self.connect()
+        return self
+
+    def __exit__(self):
+        self.disconnect()
+
+    @property
+    def uri(self) -> str:
+        return self._uri
+
+    @property
+    def cert(self) -> str:
+        return self._cert
+
+    @property
+    def conversations(self) -> Collection:
+        return self._conversations
+
+    @property
+    def messages(self) -> Collection:
+        return self._messages
+
+    @property
+    def users(self) -> Collection:
+        return self._users
+
+    def connect(self):
+        """
+        Initiate connection to the database.
+
+        A call to this function must be paired with a call to
+        `connector.disconnect` before it can be called again.
+
+        This function is automatically called when entering a runtime context.
+        """
         client = MongoClient(
             self.uri, tls=True, tlsCertificateKeyFile=self.cert
         )
@@ -43,23 +78,19 @@ class MongoConnector:
         self._conversations: Collection = self._db["conversations"]
         self._messages: Collection = self._db["messages"]
         self._users: Collection = self._db["users"]
-        return self
 
-    def __exit__(self):
+    def disconnect(self):
+        """
+        Tear down connection to the database.
+
+        This function is automatically called when exiting a runtime context.
+        """
         self._db.close()
         del self._db
         self._db = None
         self._conversations = None
         self._messages = None
         self._users = None
-
-    @property
-    def uri(self) -> str:
-        return self._uri
-
-    @property
-    def cert(self) -> str:
-        return self._cert
 
     def messages_from_conversation(
         self, conversation: models.Conversation
