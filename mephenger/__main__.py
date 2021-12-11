@@ -31,7 +31,7 @@ from mephenger import config
 
 from dotenv import load_dotenv
 
-from mephenger.legacy.models.screens_manager import ScreensManager
+from mephenger import ScreensManager
 
 Builder.load_file("{0}/common.kv".format(config.VIEWS_DIR))
 
@@ -43,7 +43,7 @@ class Main(App):
         from mephenger.views.landing import LandingScreen
 
         sm = ScreensManager()
-        landing_screen = LandingScreen()
+        landing_screen = LandingScreen(sm)
         sm.add_widget(landing_screen)
         sm.current = "landing"
         landing_screen.set_teams_list()

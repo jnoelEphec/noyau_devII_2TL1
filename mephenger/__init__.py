@@ -2,9 +2,11 @@ import json
 import os.path
 
 from mephenger import config, exceptions, legacy, models, views
+from mephenger.screens_manager import ScreensManager
 from mephenger.session import Session
 
-__all__ = ["config", "exceptions", "models", "views", "Session"]
+__all__ = ["config", "exceptions", "models", "views", "ScreensManager",
+           "Session"]
 
 # Initialize the temporary database if that's not the case
 if not os.path.exists(config.TMP_DB_FILE):
