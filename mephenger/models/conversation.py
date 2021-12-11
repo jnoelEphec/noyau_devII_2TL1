@@ -6,9 +6,10 @@
     ----- CODE DE LA CLASSE A IMPLEMENTER -----
 """
 from __future__ import annotations
+
 from typing import Iterable, Optional
 
-from mephenger.exceptions import NoSuchItem, TimeoutExpired
+from mephenger.exceptions import NoSuchItem, TimeoutExpired, Todo
 from mephenger.libs import temp_db
 from mephenger.models.model import Model
 from mephenger.models.user import User
@@ -95,3 +96,20 @@ class Conversation(Model):
         self._owner = myself._owner
         self._name = myself._name
         return self
+
+    def add_member(self, inviter: User, invitee: User):
+        """
+        Add a `User` to this conversation.
+
+        # Arguments:
+
+        - inviter: The `User` inviting the new user in the group.
+        - invitee: the invited `User`.
+
+        # Errors:
+
+        A `PermissionDenied` is raised if `inviter` doesn't have the rights to
+        invite `invitee` in the group.
+        """
+        # Todo
+        raise Todo(__file__, Conversation.add_member)
