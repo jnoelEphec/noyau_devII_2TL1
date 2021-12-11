@@ -3,24 +3,41 @@ from __future__ import annotations
 from hmac import compare_digest
 from typing import Optional
 
+from mephenger import ScreensManager
 from mephenger.exceptions import IncorrectPassword, NotAMember
 from mephenger.models import Conversation, User
+from mephenger.views import LandingScreen
 
 
 class Session:
 
-    def __init__(self, login: str, password: str):
+    def __init__(
+        self, screens_manager: ScreensManager, login: str, password: str
+    ):
         user = User.fetch_by_id(login, password=True)
         # TODO: Use a stronger hash than python's builtin
         if not compare_digest(hash(password), user.password):
             raise IncorrectPassword(f"Couldn't log user {user} in")
+        self._screens_manager = screens_manager
         self._user = user
         self._conversations: dict[int, Conversation] = {}
         self._current_conversation: Optional[int] = None
+        self._landing_screen = LandingScreen(self)
+        screens_manager.add_widget(self._landing_screen)
+        screens_manager.current = "landing"
+        self._landing_screen.set_teams_list()
 
     def __del__(self):
         # used to log off
         pass
+
+    @property
+    def screens_manager(self):
+        return self._screens_manager
+
+    @property
+    def landing_screen(self):
+        return self._landing_screen
 
     @property
     def user(self) -> User:

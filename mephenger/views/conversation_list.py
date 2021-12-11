@@ -11,10 +11,9 @@ from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.uix.relativelayout import RelativeLayout
-from kivy.uix.screenmanager import ScreenManagerException
 from kivy.uix.scrollview import ScrollView
 
-from mephenger import config, ScreensManager
+from mephenger import config, Session
 from mephenger.models import Conversation
 
 Builder.load_file(f"{config.VIEWS_DIR}/channel.kv")
@@ -38,15 +37,10 @@ class ConversationsListButton(Button):
 
 class ConversationsContainer(ScrollView):
 
-    def __init__(self, sm: ScreensManager, conversations: list[Conversation]):
+    def __init__(self, session: Session, conversations: list[Conversation]):
         super(ConversationsContainer, self).__init__()
         self.conversations = conversations
         self.channels_container = self.ids.channels_content
-        try:
-            landing_screen = sm.get_screen("landing")
-        except ScreenManagerException:
-            # TODO: Handle error
-            pass
 
         pms_group = self.init_group("Private Messages")
         groups_group = self.init_group("Groups")
@@ -54,7 +48,7 @@ class ConversationsContainer(ScrollView):
         self.channels_container.add_widget(groups_group)
 
         def handle(_, _id: str):
-            landing_screen.display_conversation(_id)
+            session.landing_screen.display_conversation(_id)
 
         for conversation in self.conversations:
             conversation_row = ConversationsListButton(

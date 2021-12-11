@@ -27,7 +27,7 @@
 from kivy.app import App
 from kivy.lang import Builder
 
-from mephenger import config
+from mephenger import config, Session
 
 from dotenv import load_dotenv
 
@@ -40,14 +40,8 @@ class Main(App):
     title = 'EpheCom'
 
     def build(self):
-        from mephenger.views.landing import LandingScreen
-
-        sm = ScreensManager()
-        landing_screen = LandingScreen(sm)
-        sm.add_widget(landing_screen)
-        sm.current = "landing"
-        landing_screen.set_teams_list()
-        return sm
+        session = Session(ScreensManager(), "linus", "torvalds")
+        return session.screens_manager
 
 
 class Personne:
