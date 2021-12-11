@@ -24,14 +24,12 @@
 
 """
 
+from dotenv import load_dotenv
 from kivy.app import App
 from kivy.lang import Builder
 
-from mephenger import config, Session
-
-from dotenv import load_dotenv
-
-from mephenger import ScreensManager
+from mephenger import config, ScreensManager, Session
+from mephenger.db import MongoConnector
 
 Builder.load_file("{0}/common.kv".format(config.VIEWS_DIR))
 
@@ -39,8 +37,19 @@ Builder.load_file("{0}/common.kv".format(config.VIEWS_DIR))
 class Main(App):
     title = 'EpheCom'
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self._connector = MongoConnector(
+            config.DB_URI, config.DB_CERT, "ephecom-2TL1"
+        ).__enter__()
+
+    def __del__(self):
+        self._connector.__exit__()
+
     def build(self):
-        session = Session(ScreensManager(), "linus", "torvalds")
+        session = Session(
+            ScreensManager(), self._connector, "linus", "torvalds"
+        )
         return session.screens_manager
 
 

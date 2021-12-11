@@ -4,6 +4,7 @@ from hmac import compare_digest
 from typing import Optional
 
 from mephenger import ScreensManager
+from mephenger.db import MongoConnector
 from mephenger.exceptions import IncorrectPassword, NotAMember
 from mephenger.models import Conversation, User
 from mephenger.views import LandingScreen
@@ -12,13 +13,15 @@ from mephenger.views import LandingScreen
 class Session:
 
     def __init__(
-        self, screens_manager: ScreensManager, login: str, password: str
+        self, screens_manager: ScreensManager, connector: MongoConnector,
+        login: str, password: str
     ):
         user = User.fetch_by_id(login, password=True)
         # TODO: Use a stronger hash than python's builtin
         if not compare_digest(hash(password), user.password):
             raise IncorrectPassword(f"Couldn't log user {user} in")
         self._screens_manager = screens_manager
+        self._connector = connector
         self._user = user
         self._conversations: dict[int, Conversation] = {}
         self._current_conversation: Optional[int] = None
@@ -34,6 +37,10 @@ class Session:
     @property
     def screens_manager(self):
         return self._screens_manager
+
+    @property
+    def connector(self):
+        return self._connector
 
     @property
     def landing_screen(self):
