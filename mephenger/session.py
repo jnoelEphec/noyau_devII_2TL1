@@ -18,8 +18,12 @@ class Session:
         self._conversations: dict[int, Conversation] = {}
         self._current_conversation: Optional[int] = None
 
+    def __del__(self):
+        # used to log off
+        pass
+
     @property
-    def user(self):
+    def user(self) -> User:
         return self._user
 
     @property
@@ -40,3 +44,34 @@ class Session:
     @current_conversation.deleter
     def current_conversation(self):
         self._current_conversation = None
+
+    def create_group(self, name: str) -> Conversation:
+        """
+        Create a new `Group`. The currently logged in user will be the owner and
+        the only member upon creation.
+
+        # Arguments
+
+        - name: The group's name.
+
+        # Return
+
+        The newly created group
+        """
+        return Conversation(None, (self.user,), self.user, name)
+
+    def add_to_group(self, group: Conversation, user: User):
+        """
+        Add a `User` to a `Group`.
+
+        # Arguments
+
+        - group: The `Group` to add a user to.
+        - user: The `User` to add in the `Group`.
+
+        # Errors
+
+        Raises a `PermissionDenied` exception if the logged in user doesn't
+        have enough privilege to add `user` to `group`.
+        """
+        group.add_member(self._user, user)
