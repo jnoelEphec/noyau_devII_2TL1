@@ -1,5 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
+from typing import Optional
 
 
 class Model(ABC):
@@ -27,6 +28,16 @@ class Model(ABC):
         """
         pass
 
+    def __init__(self, _id: Optional[str]):
+        self._id = _id
+
+    @property
+    def id(self) -> Optional[str]:
+        """
+        The unique identifier of this message, if it has one.
+        """
+        return self._id
+
     @property
     @abstractmethod
     def json(self) -> dict:
@@ -38,7 +49,8 @@ class Model(ABC):
     @abstractmethod
     def db_push(self):
         """
-        Update the database's state of this object.
+        Update the database's state of this object. If this model wasn't in the
+        database yet (i.e. it's `id` was still None), update its `id`.
 
         # Errors
 
@@ -65,3 +77,13 @@ class Model(ABC):
         database. You may solve this by calling `db_push()`.
         """
         pass
+
+    def is_in_db(self) -> bool:
+        """
+        Check if the model is present in the database.
+
+        # Returns
+
+        `True` if the model has been assigned an id, `False` otherwise.
+        """
+        return self.id is not None

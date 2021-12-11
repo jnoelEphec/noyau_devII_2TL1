@@ -25,14 +25,20 @@ class User(Model):
             raise NoSuchItem(f"Couldn't fetch user {_id}")
         return User(_id, users[_id]["pseudo"])
 
-    def __init__(self, _id: str, pseudo: str, password: Optional[str] = None):
+    def __init__(
+        self, _id: Optional[str], pseudo: str, password: Optional[str] = None
+    ):
         if password is not None and len(password) < 1:
             raise ValueError("User password must be non-empty")
         if len(pseudo) < 1:
             raise ValueError("User pseudo must be non-empty")
-        self._id = _id
+
+        super(User, self).__init__(_id)
         self._pseudo = pseudo
         self._password = None if password is None else hash(password)
+
+        if _id is None:
+            self.db_push()
 
     @property
     def id(self):
@@ -68,6 +74,9 @@ class User(Model):
                 **self.json,
             }
             return db
+
+        if self.id is None:
+            self._id = temp_db.get_id()
 
         try:
             temp_db.update(update)

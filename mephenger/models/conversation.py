@@ -53,8 +53,7 @@ class Conversation(Model):
                 "Conversations with 2 members must not have an owner and "
                 "a name"
             )
-
-        self._id = _id
+        super(Conversation, self).__init__(_id)
         self._members: list[User] = members
         self._owner = owner
         self._name = name
@@ -90,6 +89,9 @@ class Conversation(Model):
                 **self.json,
             }
             return db
+
+        if self.id is None:
+            self._id = temp_db.get_id()
 
         try:
             temp_db.update(update)

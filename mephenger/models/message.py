@@ -8,6 +8,8 @@
 """
 from __future__ import annotations
 
+from typing import Optional
+
 from mephenger.exceptions import NoSuchItem, TimeoutExpired
 from mephenger.libs import temp_db
 from mephenger.models.conversation import Conversation
@@ -32,18 +34,13 @@ class Message(Model):
             messages[_id]["text"]
         )
 
-    def __init__(self, _id: str, sender: User, conv: Conversation, text: str):
-        self._id = _id
+    def __init__(
+        self, _id: Optional[str], sender: User, conv: Conversation, text: str
+    ):
+        super(Message, self).__init__(_id)
         self._sender = sender
         self._conv = conv
         self._text = text
-
-    @property
-    def id(self) -> str:
-        """
-        The unique identifier of this message.
-        """
-        return self._id
 
     @property
     def sender(self) -> User:
@@ -83,6 +80,9 @@ class Message(Model):
                 **self.json,
             }
             return db
+
+        if self.id is None:
+            self._id = temp_db.get_id()
 
         try:
             temp_db.update(update)
