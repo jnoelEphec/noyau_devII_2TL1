@@ -16,14 +16,17 @@ from mephenger.models.model import Model
 
 class User(Model):
     @staticmethod
-    def fetch_by_id(_id: str) -> User:
+    def fetch_by_id(_id: str, password: bool = False) -> User:
         try:
             users = temp_db.load()["users"]
         except TimeoutExpired:
             raise TimeoutExpired(f"Couldn't fetch user {_id}")
         if _id not in users:
             raise NoSuchItem(f"Couldn't fetch user {_id}")
-        return User(_id, users[_id]["pseudo"])
+        if password:
+            return User(_id, users[_id]["pseudo"], users[_id]["password"])
+        else:
+            return User(_id, users[_id]["pseudo"])
 
     def __init__(
         self, _id: Optional[str], pseudo: str, password: Optional[str] = None

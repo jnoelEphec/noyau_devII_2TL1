@@ -1,22 +1,19 @@
 from __future__ import annotations
+
 from hmac import compare_digest
 from typing import Optional
 
-from mephenger.exceptions import IncorrectPassword, NoSuchItem, NotAMember
-from mephenger.libs import temp_db
-from mephenger.models import Conversation, User
+from mephenger import Conversation, Group, models, User
+from mephenger.exceptions import IncorrectPassword, NotAMember
 
 
 class Session:
 
     @staticmethod
-    def log_in(user: User, password: str) -> Session:
-        users = temp_db.load()["users"]
-
-        if user.id not in users:
-            raise NoSuchItem(f"Couldn't log user {user.id} in")
+    def log_in(login: str, password: str) -> Session:
+        user = models.User.fetch_by_id(login, password=True)
         # TODO: Use a stronger hash than python's builtin
-        if compare_digest(hash(password), users[user.id]["password"]):
+        if compare_digest(hash(password), user.password):
             return Session(user)
         raise IncorrectPassword(f"Couldn't log user {user.id} in")
 
