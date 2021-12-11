@@ -13,7 +13,7 @@
 from kivy.lang import Builder
 from kivy.uix.screenmanager import Screen
 
-from mephenger import config, Session
+from mephenger import config, models, Session
 from mephenger.views.conversation import Conversation
 from mephenger.views.conversation_list import ConversationsContainer
 from mephenger.views.teams_container import TeamsContainer
@@ -53,16 +53,16 @@ class LandingScreen(Screen):
             ConversationsContainer(self._session.screens_manager, team_channels)
         )
 
-    def display_conversation(self, channel_id: str):
+    def display_conversation(self, _id: str):
         """
             [Base]
             Permet la mise à jour de la conversation active après un clic sur
             le nom d'un "Channel".
-            :param channel_id: L'identifiant du "Channel" concerné sur 8
+            :param _id: L'identifiant du "Channel" concerné sur 8
             caractères.
         """
         self.conv_box.clear_widgets()
-        conversation = Conversation(channel_id)
+        conversation = Conversation(models.Conversation.fetch_by_id(_id))
         self.conv_box.add_widget(conversation)
 
     def set_teams_list(self):
