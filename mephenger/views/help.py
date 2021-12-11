@@ -3,7 +3,8 @@
 
 """
     [BASE]
-    Ce fichier contient la classe Help contenant l'ensemble des directives pour l'aide utilisateur.
+    Ce fichier contient la classe Help contenant l'ensemble des directives
+    pour l'aide utilisateur.
     ----- CODE DE LA CLASSE A IMPLEMENTER -----
 """
 from kivy.uix.screenmanager import Screen

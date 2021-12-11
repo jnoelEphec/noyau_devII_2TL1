@@ -3,7 +3,8 @@
 
 """
     [BASE]
-    Ce fichier représente une vue contenant la liste des "Team" disponible à l'utilisateur.
+    Ce fichier représente une vue contenant la liste des "Team" disponible à
+    l'utilisateur.
 """
 from kivy.lang import Builder
 from kivy.uix.button import Button
@@ -12,14 +13,13 @@ from kivy.uix.screenmanager import ScreenManagerException
 from kivy.uix.scrollview import ScrollView
 
 from mephenger import config
-from mephenger.libs.sorting.dict_sort import dict_sort
 from mephenger.legacy.models.channel import Channel
 from mephenger.legacy.models.group import Group
 from mephenger.legacy.models.screens_manager import ScreensManager
 from mephenger.legacy.models.team import Team
+from mephenger.libs.sorting.dict_sort import dict_sort
 
-
-Builder.load_file("{0}/teams.kv".format(config.VIEWS_DIR))
+Builder.load_file(f"{config.VIEWS_DIR}/teams.kv")
 
 
 class TeamsListButton(Button):
@@ -48,8 +48,12 @@ class TeamsContainer(ScrollView):
                     {"pseudo": "Jacques"},
                 ],
                 "channels": [
-                    Channel("abc1okDa", "My Channel 1", Group("akjIuY89", "Général")),
-                    Channel("1Oo0abdh", "My Channel 2", Group("akJhdgGa", "Profs"))
+                    Channel(
+                        "abc1okDa", "My Channel 1", Group("akjIuY89", "Général")
+                    ),
+                    Channel(
+                        "1Oo0abdh", "My Channel 2", Group("akJhdgGa", "Profs")
+                    )
                 ]
             },
             "0iIaJbL4": {
@@ -62,8 +66,12 @@ class TeamsContainer(ScrollView):
                     {"pseudo": "Jacques"},
                 ],
                 "channels": [
-                    Channel("abc1okDb", "My Channel 1", Group("akkIuY89", "Général")),
-                    Channel("1Oo0abdb", "My Channel 2", Group("akaIuY89", "Général"))
+                    Channel(
+                        "abc1okDb", "My Channel 1", Group("akkIuY89", "Général")
+                    ),
+                    Channel(
+                        "1Oo0abdb", "My Channel 2", Group("akaIuY89", "Général")
+                    )
                 ]
             },
             "jdhTucB1": {
@@ -76,8 +84,12 @@ class TeamsContainer(ScrollView):
                     {"pseudo": "Jacques"},
                 ],
                 "channels": [
-                    Channel("abc1okDb", "My Channel 1", Group("akjvuY89", "Général")),
-                    Channel("1Oo0abdb", "My Channel 2", Group("akjIuv89", "Blabla"))
+                    Channel(
+                        "abc1okDb", "My Channel 1", Group("akjvuY89", "Général")
+                    ),
+                    Channel(
+                        "1Oo0abdb", "My Channel 2", Group("akjIuv89", "Blabla")
+                    )
                 ]
             }
         }
@@ -88,8 +100,10 @@ class TeamsContainer(ScrollView):
         """
             [BASE]
             Initialise la liste des "Team" auxquelles l'utilisateur est inscrit.
-            Si l'utilisateur fait partie de channels, ils sont affichés le container concerné.
-            Sinon, un message s'affiche précisant que l'utilisateur ne fait partie d'aucun channel.
+            Si l'utilisateur fait partie de channels, ils sont affichés le
+            container concerné.
+            Sinon, un message s'affiche précisant que l'utilisateur ne fait
+            partie d'aucun channel.
         """
         self.content.clear_widgets()
 
@@ -105,7 +119,12 @@ class TeamsContainer(ScrollView):
             for team in teams_list:
                 channel_label = TeamsListButton(text=team.name)
                 channel_label.bind(
-                    on_press=lambda a, _channels=team.channels: landing_screen.display_channels(_channels))
+                    on_press=lambda a,
+                                    _channels=team.channels:
+                    landing_screen.display_channels(
+                        _channels
+                    )
+                )
                 self.content.add_widget(channel_label)
         else:
             self.content.add_widget(EmptyTeams())
@@ -114,14 +133,16 @@ class TeamsContainer(ScrollView):
         """
             [BASE]
             Récupère la liste des "Team" depuis la banque de données.
-            :return: list : La liste des "Team" (objets) auxquels l'utilisateur appartient, triés par leurs noms.
+            :return: list : La liste des "Team" (objets) auxquels
+            l'utilisateur appartient, triés par leurs noms.
         """
 
         list_of_teams = []
 
         if self.data_from_db:
 
-            # Trier sur le nom grâce à notre librairie de tri mephenger.libs.sorting
+            # Trier sur le nom grâce à notre librairie de tri
+            # mephenger.libs.sorting
             data_from_db = dict_sort(self.data_from_db, "name")
 
             for team_id in data_from_db:
@@ -130,7 +151,10 @@ class TeamsContainer(ScrollView):
                 participants = data_from_db[team_id]["participants"]
                 channels = data_from_db[team_id]["channels"]
 
-                inst = Team(team_id, name, channels, icon_path=icon_path, participants=participants)
+                inst = Team(
+                    team_id, name, channels, icon_path=icon_path,
+                    participants=participants
+                )
                 list_of_teams.append(inst)
 
             return list_of_teams

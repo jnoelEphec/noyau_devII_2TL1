@@ -17,8 +17,7 @@ from kivy.uix.scrollview import ScrollView
 from mephenger import config
 from mephenger.legacy.models.screens_manager import ScreensManager
 
-
-Builder.load_file("{0}/channel.kv".format(config.VIEWS_DIR))
+Builder.load_file(f"{config.VIEWS_DIR}/channel.kv")
 
 
 class GroupTitleRow(BoxLayout):
@@ -63,7 +62,11 @@ class ChannelsContainer(ScrollView):
                 group = BoxLayout(orientation="vertical", size_hint_y=None)
                 title_row = GroupTitleRow()
                 title_label = GroupLabel(text=group_name)
-                title_add_btn = GroupAddButton(on_press=lambda a, _grp=group_name: self.add_new_channel(_grp))
+                title_add_btn = GroupAddButton(
+                    on_press=lambda a, _grp=group_name: self.add_new_channel(
+                        _grp
+                    )
+                )
                 title_row.add_widget(title_label)
                 title_row.add_widget(title_add_btn)
                 group.add_widget(title_row)
@@ -71,29 +74,43 @@ class ChannelsContainer(ScrollView):
 
                 groups[channel.group.name] = group
 
-            channel_name_row = ChannelsListButton(text=channel.name,
-                                                  on_press=lambda a, _id=channel.identifier:
-                                                  self.landing_screen.display_conversation(_id))
+            channel_name_row = ChannelsListButton(
+                text=channel.name,
+                on_press=lambda a, _id=channel.identifier:
+                self.landing_screen.display_conversation(_id)
+            )
             groups[group_name].add_widget(channel_name_row)
 
     def add_new_channel(self, group_name):
         """
-        Cette méthode permet d'ajouter un nouveau channel dans le groupe concerné.
+        Cette méthode permet d'ajouter un nouveau channel dans le groupe
+        concerné.
         :param group_name: Représente le nom du groupe concerné.
         """
         content = RelativeLayout()
 
-        content.add_widget(Label(text="Le nom du nouveau channel et d'autres éléments"))
         content.add_widget(
-            Button(text="Ajouter", size_hint=(None, None), size=(150, 40), pos_hint={'center_x': .4, 'center_y': .1}))
-        cancel = Button(text="Annuler", size_hint=(None, None), size=(150, 40), pos_hint={'center_x': .6, 'center_y': .1})
+            Label(text="Le nom du nouveau channel et d'autres éléments")
+        )
+        content.add_widget(
+            Button(
+                text="Ajouter", size_hint=(None, None), size=(150, 40),
+                pos_hint={'center_x': .4, 'center_y': .1}
+            )
+        )
+        cancel = Button(
+            text="Annuler", size_hint=(None, None), size=(150, 40),
+            pos_hint={'center_x': .6, 'center_y': .1}
+        )
         content.add_widget(cancel)
 
-        popup = Popup(title="Ajouter un nouveau channel à {0}".format(group_name),
-                      size_hint=(.5, .5),
-                      pos_hint={'center_x': .5, 'center_y': .5},
-                      content=content,
-                      auto_dismiss=False)
+        popup = Popup(
+            title="Ajouter un nouveau channel à {0}".format(group_name),
+            size_hint=(.5, .5),
+            pos_hint={'center_x': .5, 'center_y': .5},
+            content=content,
+            auto_dismiss=False
+        )
 
         cancel.bind(on_press=lambda a: popup.dismiss())
 
