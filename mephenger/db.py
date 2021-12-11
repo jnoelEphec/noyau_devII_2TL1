@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Generator
+from typing import Generator, Optional
 
 from pymongo import MongoClient
 from pymongo.collection import Collection
@@ -21,10 +21,14 @@ class MongoConnector:
     ```
     """
 
-    def __init__(self, uri: str, cert: str):
+    def __init__(self, uri: str, cert: str, db_name: Optional[str] = None):
         self._uri = uri
         self._cert = cert
-        self._db = None
+        self._db_name = db_name
+        self._db: Optional[Database] = None
+        self._conversations: Optional[Collection] = None
+        self._messages: Optional[Collection] = None
+        self._users: Optional[Collection] = None
         # TODO: Use kivy cache
         self._cache = {"conversations": {}, "messages": {}, "users": {}}
 
@@ -32,7 +36,10 @@ class MongoConnector:
         client = MongoClient(
             self.uri, tls=True, tlsCertificateKeyFile=self.cert
         )
-        self._db: Database = client["ephecom"]
+        if self._db_name is None:
+            self._db = client.get_default_database()
+        else:
+            self._db = client[self._db_name]
         self._conversations: Collection = self._db["conversations"]
         self._messages: Collection = self._db["messages"]
         self._users: Collection = self._db["users"]
@@ -42,6 +49,9 @@ class MongoConnector:
         self._db.close()
         del self._db
         self._db = None
+        self._conversations = None
+        self._messages = None
+        self._users = None
 
     @property
     def uri(self) -> str:
