@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from typing import Optional
 
@@ -53,6 +54,17 @@ class Model(ABC):
         return self._up_to_date
 
     @property
+    def is_in_db(self) -> bool:
+        """
+        Check if the model is present in the database.
+
+        # Returns
+
+        `True` if the model has been assigned an id, `False` otherwise.
+        """
+        return self.id is not None
+
+    @property
     @abstractmethod
     def json(self) -> dict:
         """
@@ -97,13 +109,3 @@ class Model(ABC):
         database. You may solve this by calling `db_push()`.
         """
         pass
-
-    def is_in_db(self) -> bool:
-        """
-        Check if the model is present in the database.
-
-        # Returns
-
-        `True` if the model has been assigned an id, `False` otherwise.
-        """
-        return self.id is not None
