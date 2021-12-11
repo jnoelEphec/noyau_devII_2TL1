@@ -1,4 +1,4 @@
-from mephenger.views.channels import ConversationsContainer
+from mephenger.views.conversation_list import ConversationsContainer
 from mephenger.views.conversation import Conversation
 from mephenger.views.help import Help
 from mephenger.views.landing import LandingScreen
