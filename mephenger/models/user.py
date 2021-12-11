@@ -32,7 +32,7 @@ class User(Model):
         return user
 
     def __init__(
-        self, _id: Optional[str], pseudo: str, password: Optional[str] = None
+        self, _id: str, pseudo: str, password: Optional[str] = None
     ):
         if password is not None and len(password) < 1:
             raise ValueError("User password must be non-empty")
