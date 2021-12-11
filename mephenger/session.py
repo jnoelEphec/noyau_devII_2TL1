@@ -3,21 +3,17 @@ from __future__ import annotations
 from hmac import compare_digest
 from typing import Optional
 
-from mephenger import Conversation, Group, models, User
 from mephenger.exceptions import IncorrectPassword, NotAMember
+from mephenger.models import Conversation, User
 
 
 class Session:
 
-    @staticmethod
-    def log_in(login: str, password: str) -> Session:
-        user = models.User.fetch_by_id(login, password=True)
+    def __init__(self, login: str, password: str):
+        user = User.fetch_by_id(login, password=True)
         # TODO: Use a stronger hash than python's builtin
-        if compare_digest(hash(password), user.password):
-            return Session(user)
-        raise IncorrectPassword(f"Couldn't log user {user.id} in")
-
-    def __init__(self, user: User):
+        if not compare_digest(hash(password), user.password):
+            raise IncorrectPassword(f"Couldn't log user {user} in")
         self._user = user
         self._conversations: dict[int, Conversation] = {}
         self._current_conversation: Optional[int] = None
