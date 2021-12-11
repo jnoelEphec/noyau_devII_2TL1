@@ -39,19 +39,10 @@ class Conversation(Model):
         owner: Optional[User] = None, name: Optional[str] = None
     ):
         members = list(members)
-        if len(members) > 2 and (owner is None or name is None):
+        if not ((owner is None) ^ (name is None)):
             raise ValueError(
-                "Conversations with more than 2 members must have an owner and "
-                "a name"
-            )
-        elif len(members) > 2 and len(name) < 1:
-            raise ValueError("Conversations must have a non-empty name")
-        elif len(members) < 2:
-            raise ValueError("Conversations must have at least 2 members")
-        elif owner is not None or name is not None:
-            raise ValueError(
-                "Conversations with 2 members must not have an owner and "
-                "a name"
+                "Conversation owner and name must be either not specified or "
+                "both specified"
             )
         super(Conversation, self).__init__(_id)
         self._members: list[User] = members
