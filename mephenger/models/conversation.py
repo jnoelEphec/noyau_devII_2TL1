@@ -113,5 +113,9 @@ class Conversation(Model):
         A `PermissionDenied` is raised if `inviter` doesn't have the rights to
         invite `invitee` in the group.
         """
-        # Todo
-        raise Todo(__file__, Conversation.add_member)
+        if inviter.id != self.owner.id:
+            raise PermissionError(
+                f"User {inviter} cannot invite user {invitee} in group {self}"
+            )
+        self._members.append(invitee)
+        self._up_to_date = False
