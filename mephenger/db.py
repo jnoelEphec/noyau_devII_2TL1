@@ -36,7 +36,7 @@ class MongoConnector:
         self.connect()
         return self
 
-    def __exit__(self):
+    def __exit__(self, *_):
         self.disconnect()
 
     @property
