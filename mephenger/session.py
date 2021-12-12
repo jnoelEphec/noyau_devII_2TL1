@@ -27,7 +27,7 @@ class Session:
         self._db.connect()
         user = User.fetch_by_id(login, password=True)
         # TODO: Use a stronger hash than python's builtin
-        if not compare_digest(hash(password), user.password):
+        if password != user.password:
             raise IncorrectPassword(f"Couldn't log user {user} in")
 
         self._screens_manager = screens_manager

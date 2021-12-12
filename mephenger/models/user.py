@@ -34,7 +34,7 @@ class User(Model):
 
         super(User, self).__init__(_id)
         self._pseudo = pseudo
-        self._password = None if password is None else hash(password)
+        self._password = None if password is None else password
 
     @property
     def pseudo(self):
@@ -42,13 +42,7 @@ class User(Model):
 
     @property
     def password(self):
-        raise AttributeError("Cannot access user password")
-
-    @password.setter
-    def password(self, password: str):
-        if password is not None and len(password) < 1:
-            raise ValueError("User password must be non-empty")
-        self._password = hash(password)
+        return self._password
 
     @property
     def json(self) -> Dict:
