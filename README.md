@@ -1,5 +1,12 @@
 # Mephenger
 
+[![Ephecom](https://img.shields.io/badge/Ephecom-2TL1-5-black?labelColor=orange&style=flat&link=https://moodle.ephec.be/course/view.php?id=9277#section-0&cacheSeconds=778000)](https://moodle.ephec.be/course/view.php?id=9277#section-0)
+
+[![workflow](https://github.com/Austreelis/devII_2TL1-5/actions/workflows/main.yml/badge.svg?branch=develop)](https://github.com/Austreelis/devII_2TL1-5/actions)
+[![Issues](https://img.shields.io/github/issues-raw/Austreelis/devII_2TL1-5.svg?maxAge=25000)](https://github.com/Austreelis/devII_2TL1-5/issues) 
+[![GitHub Release](https://img.shields.io/github/release/Austreelis/devII_2TL1-5.svg?style=flat)]()
+[![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
+
 Ce logiciel a été développé dans le cadre du projet EpheCom de la haute-école
 [EPHEC](ephec.be).
 
