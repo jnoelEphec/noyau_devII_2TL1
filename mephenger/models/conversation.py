@@ -9,13 +9,12 @@ from __future__ import annotations
 
 from typing import Iterable, Optional
 
+from mephenger import get_session
 from mephenger.exceptions import (
     NoSuchItem,
     NotAGroup,
     PermissionDenied,
-    TimeoutExpired,
 )
-from mephenger.libs import temp_db
 from mephenger.models.model import Model
 from mephenger.models.user import User
 
@@ -23,22 +22,10 @@ from mephenger.models.user import User
 class Conversation(Model):
     @staticmethod
     def fetch_by_id(_id: str) -> Conversation:
-        try:
-            conversations = temp_db.load()["conversations"]
-        except TimeoutExpired:
-            raise TimeoutExpired(f"Couldn't fetch conversation {_id}")
-        if _id not in conversations:
+        conversation = get_session().db.conversations.find_one({"_id": _id})
+        if conversation is None:
             raise NoSuchItem(f"Couldn't fetch conversation {_id}")
-
-        members_dict = {name: User.fetch_by_id(name)
-                        for name in conversations[_id]["members"]}
-        owner = None
-        name = None
-        if len(conversations[_id]["members"]) > 2:
-            owner = members_dict[conversations[_id]["owner"]]
-            name = conversations[_id]["name"]
-
-        return Conversation(_id, members_dict.values(), owner, name)
+        return Conversation(**conversation)
 
     def __init__(
         self, _id: Optional[str], members: Iterable[User],
@@ -84,20 +71,13 @@ class Conversation(Model):
         return self.owner is not None and self.name is not None
 
     def db_push(self):
-        def update(db):
-            db["conversations"][self.id] = {
-                **db["conversation"].get(self.id, {}),
-                **self.json,
-            }
-            return db
-
-        try:
-            temp_db.update(update)
-            self._up_to_date = True
-            if self.id is None:
-                self._id = temp_db.get_id()
-        except TimeoutExpired:
-            raise TimeoutExpired(f"Couldn't push conversation {self.id}")
+        if self.is_in_db:
+            assert get_session().db.conversations \
+                       .update_one({"_id": self.id}, self.json).modified_count \
+                   == 1
+        else:
+            self._id = \
+                get_session().db.conversations.insert_one(self.json).inserted_id
 
     def db_fetch(self) -> Conversation:
         myself = Conversation.fetch_by_id(self.id)

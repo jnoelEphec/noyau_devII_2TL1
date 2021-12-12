@@ -9,27 +9,20 @@ from __future__ import annotations
 
 from typing import Dict, Optional
 
-from mephenger.exceptions import NoSuchItem, TimeoutExpired
-from mephenger.libs import temp_db
+from mephenger import get_session
+from mephenger.exceptions import NoSuchItem
 from mephenger.models.model import Model
 
 
 class User(Model):
     @staticmethod
     def fetch_by_id(_id: str, password: bool = False) -> User:
-        try:
-            users = temp_db.load()["users"]
-        except TimeoutExpired:
-            raise TimeoutExpired(f"Couldn't fetch user {_id}")
-        if _id not in users:
+        user = get_session().db.users.find_one({"_id": _id})
+        if user is None:
             raise NoSuchItem(f"Couldn't fetch user {_id}")
         if password:
-            user = User(_id, users[_id]["pseudo"], users[_id]["password"])
-        else:
-            user = User(_id, users[_id]["pseudo"])
-        user._is_in_db = True
-        user._up_to_date = True
-        return user
+            del user["password"]
+        return User(**user)
 
     def __init__(
         self, _id: str, pseudo: str, password: Optional[str] = None
@@ -61,9 +54,10 @@ class User(Model):
     @property
     def json(self) -> Dict:
         json = {
-            "pseudo": self.pseudo
+            "_id": self.id,
+            "pseudo": self.pseudo,
         }
-        if self._password is not None:
+        if self.password is not None:
             json["password"] = self._password
         return json
 
@@ -72,23 +66,16 @@ class User(Model):
         return self._is_in_db
 
     def db_push(self):
-        def update(db):
-            db["users"][self.id] = {
-                **db["users"].get(self.id, {}),
-                **self.json,
-            }
-            return db
-
-        try:
-            temp_db.update(update)
-            self._is_in_db = True
-            self._up_to_date = True
-        except TimeoutExpired:
-            raise TimeoutExpired(f"Couldn't push user {self.id}")
+        if self.is_in_db:
+            assert get_session().db.users \
+                       .update_one({"_id": self.id}, self.json).modified_count \
+                   == 1
+        else:
+            assert get_session().db.users.insert_one(self.json).acknowledged
 
     def db_fetch(self) -> User:
         myself = User.fetch_by_id(self.id)
-        self._id = myself._id
-        self._is_in_db = True
-        self._up_to_date = True
+        self._pseudo = myself._pseudo
+        if self.password is not None:
+            self._password = myself._password
         return self
