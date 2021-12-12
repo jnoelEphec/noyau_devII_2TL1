@@ -9,15 +9,22 @@ from __future__ import annotations
 
 from typing import Dict, Optional
 
+from pymongo.errors import PyMongoError
+
 from mephenger import get_session
 from mephenger.exceptions import NoSuchItem
 from mephenger.models.model import Model
 
 
 class User(Model):
+    backup = {"_id": "linus", "pseudo": "Linus", "password": "torvalds"}
+
     @staticmethod
     def fetch_by_id(_id: str, password: bool = False) -> User:
-        user = get_session().db.users.find_one({"_id": _id})
+        try:
+            user = get_session().db.users.find_one({"_id": _id})
+        except PyMongoError:
+            return User(**User.backup)
         if user is None:
             raise NoSuchItem(f"Couldn't fetch user {_id}")
         if password:

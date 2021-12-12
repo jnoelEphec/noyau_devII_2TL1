@@ -10,6 +10,8 @@ from __future__ import annotations
 
 from typing import Optional
 
+from pymongo.errors import PyMongoError
+
 from mephenger import get_session
 from mephenger.exceptions import NoSuchItem
 from mephenger.models.conversation import Conversation
@@ -18,9 +20,21 @@ from mephenger.models.user import User
 
 
 class Message(Model):
+    backup = {
+        "_id": "314159265358979",
+        "sender": User(**User.backup),
+        "conversation": Conversation(**Conversation.backup),
+        "text": "Okay. I got an idea guys. I'm gonna re-implement Unix from "
+                "scratch - without all the GNU crap - and I'm gonna call it... "
+                "BSD."
+    }
+
     @staticmethod
     def fetch_by_id(_id: str) -> Message:
-        message = get_session().db.messages.find_one({"_id": _id})
+        try:
+            message = get_session().db.messages.find_one({"_id": _id})
+        except PyMongoError:
+            return Message(**Message.backup)
         if message is None:
             raise NoSuchItem(f"Couldn't fetch message {_id}")
         return Message(**message)

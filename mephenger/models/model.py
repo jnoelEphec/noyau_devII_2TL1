@@ -3,6 +3,8 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Optional
 
+from pymongo.errors import PyMongoError
+
 from mephenger import get_session
 
 
@@ -84,8 +86,11 @@ class Model(ABC):
         Raises a `TimeoutExpired` exception if the operation takes longer than
         the configured timeout.
         """
-        assert get_session().db.conversations.find_one_and_replace(
-            {"_id": self.id},
-            self.json,
-            upsert=True
-        ).acknowledged
+        try:
+            assert get_session().db.conversations.find_one_and_replace(
+                {"_id": self.id},
+                self.json,
+                upsert=True
+            ).acknowledged
+        except PyMongoError:
+            pass

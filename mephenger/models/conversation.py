@@ -9,6 +9,8 @@ from __future__ import annotations
 
 from typing import Iterable, Optional
 
+from pymongo.errors import PyMongoError
+
 from mephenger import get_session
 from mephenger.exceptions import (
     NoSuchItem,
@@ -20,9 +22,19 @@ from mephenger.models.user import User
 
 
 class Conversation(Model):
+    backup = {
+        "_id": "xxxxxxx",
+        "members": [User(**User.backup)],
+        "owner": User(**User.backup),
+        "name": "F-Nvidia",
+    }
+
     @staticmethod
     def fetch_by_id(_id: str) -> Conversation:
-        conversation = get_session().db.conversations.find_one({"_id": _id})
+        try:
+            conversation = get_session().db.conversations.find_one({"_id": _id})
+        except PyMongoError:
+            return Conversation(**Conversation.backup)
         if conversation is None:
             raise NoSuchItem(f"Couldn't fetch conversation {_id}")
         return Conversation(**conversation)
@@ -32,7 +44,8 @@ class Conversation(Model):
         owner: Optional[User] = None, name: Optional[str] = None
     ):
         members = list(members)
-        if not ((owner is None) ^ (name is None)):
+        if owner is None and name is not None \
+                or owner is not None and name is None:
             raise ValueError(
                 "Conversation owner and name must be either not specified or "
                 "both specified"
