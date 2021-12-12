@@ -31,5 +31,5 @@ class MongoConnector:
     def __enter__(self):
         return self
 
-    def __exit__(self):
+    def __exit__(self, *_):
         self.db.close()
