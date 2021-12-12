@@ -68,13 +68,13 @@ class MongoConnector:
 
         This function is automatically called when entering a runtime context.
         """
-        client = MongoClient(
+        self._client = MongoClient(
             self.uri, tls=True, tlsCertificateKeyFile=self.cert
         )
         if self._db_name is None:
-            self._db = client.get_default_database()
+            self._db = self._client.get_default_database()
         else:
-            self._db = client[self._db_name]
+            self._db = self._client[self._db_name]
         self._conversations: Collection = self._db["conversations"]
         self._messages: Collection = self._db["messages"]
         self._users: Collection = self._db["users"]
@@ -85,8 +85,9 @@ class MongoConnector:
 
         This function is automatically called when exiting a runtime context.
         """
-        self._db.close()
+        self._client.close()
         del self._db
+        del self._client
         self._db = None
         self._conversations = None
         self._messages = None
