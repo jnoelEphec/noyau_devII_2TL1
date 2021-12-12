@@ -16,7 +16,7 @@ from kivy.uix.scrollview import ScrollView
 from mephenger import config, get_session
 from mephenger.models import Conversation
 
-Builder.load_file(f"{config.VIEWS_DIR}/channel.kv")
+Builder.load_file(f"{config.VIEWS_DIR}/conversation_list.kv")
 
 
 class ConversationTitleRow(BoxLayout):

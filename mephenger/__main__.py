@@ -29,6 +29,7 @@ from kivy.app import App
 from kivy.lang import Builder
 
 from mephenger import config, ScreensManager, Session, set_session
+from mephenger.db import MongoConnector
 
 Builder.load_file("{0}/common.kv".format(config.VIEWS_DIR))
 
@@ -60,5 +61,14 @@ def main():
 
 if __name__ == '__main__':
     load_dotenv()
+
+    # Ensure we have some dummy user named tux
+    # TODO: Remove that once we've got a proper models
+    with MongoConnector(config.DB_URI, config.DB_CERT, "ephecom-2TL1") as db:
+        db.users.find_one_and_replace(
+            {"_id": "linus"},
+            {"_id": "linus", "pseudo": "Linus", "password": "torvalds"},
+            upsert=True,
+        )
 
     main()

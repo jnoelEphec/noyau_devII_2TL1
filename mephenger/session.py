@@ -3,7 +3,7 @@ from __future__ import annotations
 from hmac import compare_digest
 from typing import Optional
 
-from mephenger import config, ScreensManager
+from mephenger import config, get_session, ScreensManager, set_session
 from mephenger.db import MongoConnector
 from mephenger.exceptions import IncorrectPassword, NotAMember
 from mephenger.models import Conversation, User
@@ -15,6 +15,10 @@ class Session:
     def __init__(
         self, screens_manager: ScreensManager, login: str, password: str
     ):
+
+        if get_session() is not None:
+            raise RuntimeError("A session already exists")
+        set_session(self)
 
         self._db = MongoConnector(
             config.DB_URI, config.DB_CERT, "ephecom-2TL1"
@@ -30,7 +34,7 @@ class Session:
         self._user = user
         self._conversations: dict[int, Conversation] = {}
         self._current_conversation: Optional[int] = None
-        self._landing_screen = LandingScreen(self)
+        self._landing_screen = LandingScreen()
         screens_manager.add_widget(self._landing_screen)
         screens_manager.current = "landing"
         self._landing_screen.set_teams_list()
