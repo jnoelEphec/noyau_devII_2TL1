@@ -65,15 +65,6 @@ class Message(Model):
             "text": self.text,
         }
 
-    def db_push(self):
-        if self.is_in_db:
-            assert get_session().db.messages \
-                       .update_one({"_id": self.id}, self.json).modified_count \
-                   == 1
-        else:
-            self._id = \
-                get_session().db.messages.insert_one(self.json).inserted_id
-
     def db_fetch(self) -> Message:
         myself = Message.fetch_by_id(self.id)
         self._sender = myself._sender

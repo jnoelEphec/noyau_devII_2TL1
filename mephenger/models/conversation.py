@@ -70,21 +70,11 @@ class Conversation(Model):
     def is_group(self):
         return self.owner is not None and self.name is not None
 
-    def db_push(self):
-        if self.is_in_db:
-            assert get_session().db.conversations \
-                       .update_one({"_id": self.id}, self.json).modified_count \
-                   == 1
-        else:
-            self._id = \
-                get_session().db.conversations.insert_one(self.json).inserted_id
-
     def db_fetch(self) -> Conversation:
         myself = Conversation.fetch_by_id(self.id)
         self._members = myself._members
         self._owner = myself._owner
         self._name = myself._name
-        self._up_to_date = True
         return self
 
     def add_member(self, inviter: User, invitee: User):
@@ -112,4 +102,3 @@ class Conversation(Model):
                 f"User {inviter} cannot invite user {invitee} in group {self}"
             )
         self._members.append(invitee)
-        self._up_to_date = False

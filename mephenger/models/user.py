@@ -35,7 +35,6 @@ class User(Model):
         super(User, self).__init__(_id)
         self._pseudo = pseudo
         self._password = None if password is None else hash(password)
-        self._is_in_db = False
 
     @property
     def pseudo(self):
@@ -60,18 +59,6 @@ class User(Model):
         if self.password is not None:
             json["password"] = self._password
         return json
-
-    @property
-    def is_in_db(self) -> bool:
-        return self._is_in_db
-
-    def db_push(self):
-        if self.is_in_db:
-            assert get_session().db.users \
-                       .update_one({"_id": self.id}, self.json).modified_count \
-                   == 1
-        else:
-            assert get_session().db.users.insert_one(self.json).acknowledged
 
     def db_fetch(self) -> User:
         myself = User.fetch_by_id(self.id)
