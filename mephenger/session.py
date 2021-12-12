@@ -1,32 +1,63 @@
 from __future__ import annotations
+
 from hmac import compare_digest
 from typing import Optional
 
-from mephenger.exceptions import IncorrectPassword, NoSuchItem, NotAMember
-from mephenger.libs import temp_db
+from mephenger import config, get_session, ScreensManager, set_session
+from mephenger.db import MongoConnector
+from mephenger.exceptions import IncorrectPassword, NotAMember
 from mephenger.models import Conversation, User
+from mephenger.views import LandingScreen
 
 
 class Session:
 
-    @staticmethod
-    def log_in(user: User, password: str) -> Session:
-        users = temp_db.load()["users"]
+    def __init__(
+        self, screens_manager: ScreensManager, login: str, password: str
+    ):
 
-        if user.id not in users:
-            raise NoSuchItem(f"Couldn't log user {user.id} in")
+        if get_session() is not None:
+            raise RuntimeError("A session already exists")
+        set_session(self)
+
+        self._db = MongoConnector(
+            config.DB_URI, config.DB_CERT, "ephecom-2TL1"
+        )
+
+        self._db.connect()
+        user = User.fetch_by_id(login, password=True)
         # TODO: Use a stronger hash than python's builtin
-        if compare_digest(hash(password), users[user.id]["password"]):
-            return Session(user)
-        raise IncorrectPassword(f"Couldn't log user {user.id} in")
+        if password != user.password:
+            raise IncorrectPassword(f"Couldn't log user {user} in")
 
-    def __init__(self, user: User):
+        self._screens_manager = screens_manager
         self._user = user
         self._conversations: dict[int, Conversation] = {}
         self._current_conversation: Optional[int] = None
+        self._landing_screen = LandingScreen()
+        screens_manager.add_widget(self._landing_screen)
+        screens_manager.current = "landing"
+        self._landing_screen.set_teams_list()
+
+    def __del__(self):
+        # used to log off
+        self._db.disconnect()
+        pass
 
     @property
-    def user(self):
+    def screens_manager(self):
+        return self._screens_manager
+
+    @property
+    def db(self):
+        return self._db
+
+    @property
+    def landing_screen(self):
+        return self._landing_screen
+
+    @property
+    def user(self) -> User:
         return self._user
 
     @property
@@ -47,3 +78,34 @@ class Session:
     @current_conversation.deleter
     def current_conversation(self):
         self._current_conversation = None
+
+    def create_group(self, name: str) -> Conversation:
+        """
+        Create a new `Group`. The currently logged in user will be the owner and
+        the only member upon creation.
+
+        # Arguments
+
+        - name: The group's name.
+
+        # Return
+
+        The newly created group
+        """
+        return Conversation(None, (self.user,), self.user, name)
+
+    def add_to_group(self, group: Conversation, user: User):
+        """
+        Add a `User` to a `Group`.
+
+        # Arguments
+
+        - group: The `Group` to add a user to.
+        - user: The `User` to add in the `Group`.
+
+        # Errors
+
+        Raises a `PermissionDenied` exception if the logged in user doesn't
+        have enough privilege to add `user` to `group`.
+        """
+        group.add_member(self._user, user)

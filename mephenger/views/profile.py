@@ -3,7 +3,8 @@
 
 """
     [BASE]
-    Ce fichier contient la classe Profile contenant l'ensemble du profil de l'utilisateur.
+    Ce fichier contient la classe Profile contenant l'ensemble du profil de
+    l'utilisateur.
     ----- CODE DE LA CLASSE A IMPLEMENTER -----
 """
 from kivy.uix.screenmanager import Screen

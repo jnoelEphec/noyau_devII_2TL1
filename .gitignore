@@ -142,3 +142,6 @@ certif*.pem
 
 # Temporary database
 /public/tmp_db.json
+
+# Certificates
+*.pem

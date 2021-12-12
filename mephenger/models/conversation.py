@@ -6,55 +6,51 @@
     ----- CODE DE LA CLASSE A IMPLEMENTER -----
 """
 from __future__ import annotations
+
 from typing import Iterable, Optional
 
-from mephenger.exceptions import NoSuchItem, TimeoutExpired
-from mephenger.libs import temp_db
+from pymongo.errors import PyMongoError
+
+from mephenger import get_session
+from mephenger.exceptions import (
+    NoSuchItem,
+    NotAGroup,
+    PermissionDenied,
+)
 from mephenger.models.model import Model
 from mephenger.models.user import User
 
 
 class Conversation(Model):
+    backup = {
+        "_id": "xxxxxxx",
+        "members": [User(**User.backup)],
+        "owner": User(**User.backup),
+        "name": "F-Nvidia",
+    }
+
     @staticmethod
     def fetch_by_id(_id: str) -> Conversation:
         try:
-            conversations = temp_db.load()["conversations"]
-        except TimeoutExpired:
-            raise TimeoutExpired(f"Couldn't fetch conversation {_id}")
-        if _id not in conversations:
+            conversation = get_session().db.conversations.find_one({"_id": _id})
+        except PyMongoError:
+            return Conversation(**Conversation.backup)
+        if conversation is None:
             raise NoSuchItem(f"Couldn't fetch conversation {_id}")
-
-        members_dict = {name: User.fetch_by_id(name)
-                        for name in conversations[_id]["members"]}
-        owner = None
-        name = None
-        if len(conversations[_id]["members"]) > 2:
-            owner = members_dict[conversations[_id]["owner"]]
-            name = conversations[_id]["name"]
-
-        return Conversation(_id, members_dict.values(), owner, name)
+        return Conversation(**conversation)
 
     def __init__(
         self, _id: Optional[str], members: Iterable[User],
         owner: Optional[User] = None, name: Optional[str] = None
     ):
         members = list(members)
-        if len(members) > 2 and (owner is None or name is None):
+        if owner is None and name is not None \
+                or owner is not None and name is None:
             raise ValueError(
-                "Conversations with more than 2 members must have an owner and "
-                "a name"
+                "Conversation owner and name must be either not specified or "
+                "both specified"
             )
-        elif len(members) > 2 and len(name) < 1:
-            raise ValueError("Conversations must have a non-empty name")
-        elif len(members) < 2:
-            raise ValueError("Conversations must have at least 2 members")
-        elif owner is not None or name is not None:
-            raise ValueError(
-                "Conversations with 2 members must not have an owner and "
-                "a name"
-            )
-
-        self._id = _id
+        super(Conversation, self).__init__(_id)
         self._members: list[User] = members
         self._owner = owner
         self._name = name
@@ -83,18 +79,9 @@ class Conversation(Model):
             "name": self.name,
         }
 
-    def db_push(self):
-        def update(db):
-            db["conversations"][self.id] = {
-                **db["conversation"].get(self.id, {}),
-                **self.json,
-            }
-            return db
-
-        try:
-            temp_db.update(update)
-        except TimeoutExpired:
-            raise TimeoutExpired(f"Couldn't push conversation {self.id}")
+    @property
+    def is_group(self):
+        return self.owner is not None and self.name is not None
 
     def db_fetch(self) -> Conversation:
         myself = Conversation.fetch_by_id(self.id)
@@ -102,3 +89,29 @@ class Conversation(Model):
         self._owner = myself._owner
         self._name = myself._name
         return self
+
+    def add_member(self, inviter: User, invitee: User):
+        """
+        Add a `User` to this conversation.
+
+        # Arguments:
+
+        - inviter: The `User` inviting the new user in the group.
+        - invitee: the invited `User`.
+
+        # Errors:
+
+        A `NotAGroup` exception is raised if this `Conversation` is not a group.
+
+        A `PermissionDenied` is raised if `inviter` doesn't have the rights to
+        invite `invitee` in the group.
+        """
+        if not self.is_group:
+            raise NotAGroup(
+                f"User {inviter} cannot invite user {invitee} in group {self}"
+            )
+        if inviter.id != self.owner.id:
+            raise PermissionDenied(
+                f"User {inviter} cannot invite user {invitee} in group {self}"
+            )
+        self._members.append(invitee)

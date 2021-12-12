@@ -1,16 +1,6 @@
 from mephenger.exceptions.base import MephengerException
 
-__all__ = ["NotAMember", "IncorrectPassword"]
-
-
-class NotAMember(MephengerException):
-    @staticmethod
-    def code() -> int:
-        return 126
-
-    @staticmethod
-    def description() -> str:
-        return "User is not a member of the conversation"
+__all__ = ["IncorrectPassword", "PermissionDenied"]
 
 
 class IncorrectPassword(MephengerException):
@@ -21,3 +11,13 @@ class IncorrectPassword(MephengerException):
     @staticmethod
     def description() -> str:
         return "Incorrect password"
+
+
+class PermissionDenied(MephengerException):
+    @staticmethod
+    def code() -> int:
+        return 120
+
+    @staticmethod
+    def description() -> str:
+        return "Permission denied"

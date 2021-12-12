@@ -9,34 +9,39 @@ from __future__ import annotations
 
 from typing import Dict, Optional
 
-from mephenger.exceptions import NoSuchItem, TimeoutExpired
-from mephenger.libs import temp_db
+from pymongo.errors import PyMongoError
+
+from mephenger import get_session
+from mephenger.exceptions import NoSuchItem
 from mephenger.models.model import Model
 
 
 class User(Model):
-    @staticmethod
-    def fetch_by_id(_id: str) -> User:
-        try:
-            users = temp_db.load()["users"]
-        except TimeoutExpired:
-            raise TimeoutExpired(f"Couldn't fetch user {_id}")
-        if _id not in users:
-            raise NoSuchItem(f"Couldn't fetch user {_id}")
-        return User(_id, users[_id]["pseudo"])
+    backup = {"_id": "linus", "pseudo": "Linus", "password": "torvalds"}
 
-    def __init__(self, _id: str, pseudo: str, password: Optional[str] = None):
+    @staticmethod
+    def fetch_by_id(_id: str, password: bool = False) -> User:
+        try:
+            user = get_session().db.users.find_one({"_id": _id})
+        except PyMongoError:
+            return User(**User.backup)
+        if user is None:
+            raise NoSuchItem(f"Couldn't fetch user {_id}")
+        if password:
+            del user["password"]
+        return User(**user)
+
+    def __init__(
+        self, _id: str, pseudo: str, password: Optional[str] = None
+    ):
         if password is not None and len(password) < 1:
             raise ValueError("User password must be non-empty")
         if len(pseudo) < 1:
             raise ValueError("User pseudo must be non-empty")
-        self._id = _id
-        self._pseudo = pseudo
-        self._password = None if password is None else hash(password)
 
-    @property
-    def id(self):
-        return self._id
+        super(User, self).__init__(_id)
+        self._pseudo = pseudo
+        self._password = None if password is None else password
 
     @property
     def pseudo(self):
@@ -44,37 +49,21 @@ class User(Model):
 
     @property
     def password(self):
-        raise AttributeError("Cannot access user password")
-
-    @password.setter
-    def password(self, password: str):
-        if password is not None and len(password) < 1:
-            raise ValueError("User password must be non-empty")
-        self._password = hash(password)
+        return self._password
 
     @property
     def json(self) -> Dict:
         json = {
-            "pseudo": self.pseudo
+            "_id": self.id,
+            "pseudo": self.pseudo,
         }
-        if self._password is not None:
+        if self.password is not None:
             json["password"] = self._password
         return json
 
-    def db_push(self):
-        def update(db):
-            db["users"][self.id] = {
-                **db["users"].get(self.id, {}),
-                **self.json,
-            }
-            return db
-
-        try:
-            temp_db.update(update)
-        except TimeoutExpired:
-            raise TimeoutExpired(f"Couldn't push user {self.id}")
-
     def db_fetch(self) -> User:
         myself = User.fetch_by_id(self.id)
-        self._id = myself._id
+        self._pseudo = myself._pseudo
+        if self.password is not None:
+            self._password = myself._password
         return self

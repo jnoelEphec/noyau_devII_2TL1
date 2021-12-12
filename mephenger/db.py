@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Generator
+from typing import Generator, Optional
 
 from pymongo import MongoClient
 from pymongo.collection import Collection
@@ -21,27 +21,23 @@ class MongoConnector:
     ```
     """
 
-    def __init__(self, uri: str, cert: str):
+    def __init__(self, uri: str, cert: str, db_name: Optional[str] = None):
         self._uri = uri
         self._cert = cert
-        self._db = None
+        self._db_name = db_name
+        self._db: Optional[Database] = None
+        self._conversations: Optional[Collection] = None
+        self._messages: Optional[Collection] = None
+        self._users: Optional[Collection] = None
         # TODO: Use kivy cache
         self._cache = {"conversations": {}, "messages": {}, "users": {}}
 
     def __enter__(self) -> MongoConnector:
-        client = MongoClient(
-            self.uri, tls=True, tlsCertificateKeyFile=self.cert
-        )
-        self._db: Database = client["ephecom"]
-        self._conversations: Collection = self._db["conversations"]
-        self._messages: Collection = self._db["messages"]
-        self._users: Collection = self._db["users"]
+        self.connect()
         return self
 
-    def __exit__(self):
-        self._db.close()
-        del self._db
-        self._db = None
+    def __exit__(self, *_):
+        self.disconnect()
 
     @property
     def uri(self) -> str:
@@ -50,6 +46,52 @@ class MongoConnector:
     @property
     def cert(self) -> str:
         return self._cert
+
+    @property
+    def conversations(self) -> Collection:
+        return self._conversations
+
+    @property
+    def messages(self) -> Collection:
+        return self._messages
+
+    @property
+    def users(self) -> Collection:
+        return self._users
+
+    def connect(self):
+        """
+        Initiate connection to the database.
+
+        A call to this function must be paired with a call to
+        `connector.disconnect` before it can be called again.
+
+        This function is automatically called when entering a runtime context.
+        """
+        self._client = MongoClient(
+            self.uri, tls=True, tlsCertificateKeyFile=self.cert
+        )
+        if self._db_name is None:
+            self._db = self._client.get_default_database()
+        else:
+            self._db = self._client[self._db_name]
+        self._conversations: Collection = self._db["conversations"]
+        self._messages: Collection = self._db["messages"]
+        self._users: Collection = self._db["users"]
+
+    def disconnect(self):
+        """
+        Tear down connection to the database.
+
+        This function is automatically called when exiting a runtime context.
+        """
+        self._client.close()
+        del self._db
+        del self._client
+        self._db = None
+        self._conversations = None
+        self._messages = None
+        self._users = None
 
     def messages_from_conversation(
         self, conversation: models.Conversation

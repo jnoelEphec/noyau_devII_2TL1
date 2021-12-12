@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 """
-    Ce fichier contient la classe Subscribe permettant la gestion de l'inscription utilisateur.
+    Ce fichier contient la classe Subscribe permettant la gestion de
+    l'inscription utilisateur.
     ----- CODE DE LA CLASSE A IMPLEMENTER -----
 """
 from kivy.uix.screenmanager import Screen

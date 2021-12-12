@@ -8,42 +8,45 @@
 """
 from __future__ import annotations
 
-from mephenger.exceptions import NoSuchItem, TimeoutExpired
-from mephenger.libs import temp_db
+from typing import Optional
+
+from pymongo.errors import PyMongoError
+
+from mephenger import get_session
+from mephenger.exceptions import NoSuchItem
 from mephenger.models.conversation import Conversation
 from mephenger.models.model import Model
 from mephenger.models.user import User
 
 
 class Message(Model):
+    backup = {
+        "_id": "314159265358979",
+        "sender": User(**User.backup),
+        "conversation": Conversation(**Conversation.backup),
+        "text": "Okay. I got an idea guys. I'm gonna re-implement Unix from "
+                "scratch - without all the GNU crap - and I'm gonna call it... "
+                "BSD."
+    }
+
     @staticmethod
     def fetch_by_id(_id: str) -> Message:
         try:
-            messages = temp_db.load()["messages"]
-        except TimeoutExpired:
-            raise TimeoutExpired(f"Couldn't fetch message {_id}")
-        if _id not in messages:
+            message = get_session().db.messages.find_one({"_id": _id})
+        except PyMongoError:
+            return Message(**Message.backup)
+        if message is None:
             raise NoSuchItem(f"Couldn't fetch message {_id}")
+        return Message(**message)
 
-        return Message(
-            _id,
-            User.fetch_by_id(messages[_id]["sender"]),
-            Conversation.fetch_by_id(messages[_id]["conversation"]),
-            messages[_id]["text"]
-        )
-
-    def __init__(self, _id: str, sender: User, conv: Conversation, text: str):
-        self._id = _id
+    def __init__(
+        self, _id: Optional[str], sender: User, conversation: Conversation,
+        text: str
+    ):
+        super(Message, self).__init__(_id)
         self._sender = sender
-        self._conv = conv
+        self._conv = conversation
         self._text = text
-
-    @property
-    def id(self) -> str:
-        """
-        The unique identifier of this message.
-        """
-        return self._id
 
     @property
     def sender(self) -> User:
@@ -76,21 +79,9 @@ class Message(Model):
             "text": self.text,
         }
 
-    def db_push(self):
-        def update(db):
-            db["messages"][self.id] = {
-                **db["messages"].get(self.id, {}),
-                **self.json,
-            }
-            return db
-
-        try:
-            temp_db.update(update)
-        except TimeoutExpired:
-            raise TimeoutExpired(f"Couldn't push message {self.id}")
-
     def db_fetch(self) -> Message:
         myself = Message.fetch_by_id(self.id)
         self._sender = myself._sender
+        self._conv = myself._conv
         self._text = myself._text
         return self
