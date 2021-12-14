@@ -21,7 +21,11 @@ class MongoConnector:
     """
 
     def __init__(self):
-        client = MongoClient(config.MONGODB_URI, **config.MONGODB_CONNECT_OPT)
+        client = MongoClient(
+            config.MONGODB_URI,
+            tls=True,
+            tlsCertificateKeyFile=config.MONGODB_CERT,
+        )
         self.db = client[config.MONGODB_DBNAME]
 
     def __enter__(self):
