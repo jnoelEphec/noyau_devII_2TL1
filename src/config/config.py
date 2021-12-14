@@ -19,3 +19,17 @@ ROOT_DIR = sys.path[1]
 PUBLIC_DIR = os.path.join(ROOT_DIR, 'public')
 IMG_DIR = os.path.join(PUBLIC_DIR, 'images')
 VIEWS_DIR = os.path.join(PUBLIC_DIR, 'views')
+
+# Mongodb cert file location
+MONGODB_CERT = os.environ.get(
+    "MONGODB_CERT", os.path.join(ROOT_DIR, "certif_mongo.pem")
+)
+# Mongodb database name
+MONGODB_DBNAME = os.environ.get("MONGODB_DBNAME", "ephecom")
+# Mongodb database uri
+MONGODB_URI = os.environ.get(
+    "MONGODB_URI",
+    "mongodb+srv://cluster0.5i6qo.gcp.mongodb.net/"
+    f"{MONGODB_DBNAME}?authSource=%24external&authMechanism=MONGODB-X509"
+    "&retryWrites=true&w=majority&ssl_cert_reqs=CERT_NONE"
+)
