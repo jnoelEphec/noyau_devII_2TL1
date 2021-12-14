@@ -21,7 +21,9 @@ IMG_DIR = os.path.join(PUBLIC_DIR, 'images')
 VIEWS_DIR = os.path.join(PUBLIC_DIR, 'views')
 
 # Mongodb cert file location
-MONGODB_CERT = os.environ.get("MONGODB_CERT", ROOT_DIR + "certif_mongo.pem")
+MONGODB_CERT = os.environ.get(
+    "MONGODB_CERT", os.path.join(ROOT_DIR, "certif_mongo.pem")
+)
 # Mongodb database name
 MONGODB_DBNAME = os.environ.get("MONGODB_DBNAME", "ephecom")
 # Mongodb database uri
