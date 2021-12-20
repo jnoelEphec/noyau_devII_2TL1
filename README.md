@@ -116,7 +116,6 @@ Vous devrez maîtriser et utiliser les outils listés ci-dessous afin de vous or
 
 - Si je souhaites changer la couleur principale du projet, ou dois-je faire ma modification ?
 - Quid d'un code pas optimal ?
-- 
 
 # Attention !
 
